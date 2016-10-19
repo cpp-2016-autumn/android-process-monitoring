@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BlockingPrototype</string>
+    <string name="acc_service_name">Blocking service</string>
+    <string name="acc_service_desc">A simple blocking service</string>
+</resources>

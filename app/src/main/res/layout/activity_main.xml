@@ -56,5 +56,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/logoutButton"
             android:onClick="logoutBtnClick"/>
+
+        <Button
+            android:text="Tasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskActivityBtn" />
     </LinearLayout>
+
 </LinearLayout>

@@ -20,4 +20,5 @@
     <string name="title_activity_login">Sign in</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="title_activity_task_list">TaskListActivity</string>
 </resources>

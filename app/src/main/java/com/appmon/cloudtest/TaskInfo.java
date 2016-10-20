@@ -1,9 +1,6 @@
 package com.appmon.cloudtest;
 
-/**
- * Created by pacmancoder on 20.10.16.
- */
-
+/// Small data-class
 public class TaskInfo {
 
     private boolean mChecked;

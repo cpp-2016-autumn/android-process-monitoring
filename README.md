@@ -1,5 +1,5 @@
 # Firebase API testing
 
-Prototype TODO:
+Prototype implements:
 - [x] User auth API sample 
-- [ ] Cloud database API sample
+- [x] Cloud database API sample

@@ -2,4 +2,4 @@
 Android application blocker  
 
 ### Status
-Planing stage, writing prototypes
+Development stage

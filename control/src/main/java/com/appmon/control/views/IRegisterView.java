@@ -1,9 +1,8 @@
 package com.appmon.control.views;
 
-public interface IRegisterView {
-    void showProgress();
-    void hideProgress();
-    void showInvalidUserError();
+public interface IRegisterView extends IBaseView {
+    void showProgress(boolean state);
+    void showInvalidEmailError();
     void showWeakPasswordError();
     void showUserExistsError();
     void startDeviceListActivity();

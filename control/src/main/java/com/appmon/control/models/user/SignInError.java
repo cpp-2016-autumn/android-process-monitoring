@@ -1,4 +1,4 @@
-package com.appmon.control.models;
+package com.appmon.control.models.user;
 
 public enum SignInError {
     INVALID_USER,

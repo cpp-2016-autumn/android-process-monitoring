@@ -2,17 +2,17 @@ package com.appmon.control.presenters;
 
 import android.support.annotation.NonNull;
 
-import com.appmon.control.models.IUserModel;
+import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.views.IWelcomeView;
 
-public class WelcomePresenter extends IUserModel.Presenter implements IWelcomePresenter {
+public class WelcomePresenter implements IWelcomePresenter {
 
     private IUserModel mModel;
+    // this presenter can handle only one mView
     private IWelcomeView mView = null;
 
     public WelcomePresenter(@NonNull IUserModel model) {
         mModel = model;
-        mModel.attachPresenter(this);
     }
 
 
@@ -42,5 +42,4 @@ public class WelcomePresenter extends IUserModel.Presenter implements IWelcomePr
     public void detachView() {
         mView = null;
     }
-
 }

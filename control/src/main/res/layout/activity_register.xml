@@ -12,7 +12,7 @@
 
     <!-- Register progress -->
     <ProgressBar
-        android:id="@+id/register_progress"
+        android:id="@+id/registerProgress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,12 +21,12 @@
         tools:visibility="gone" />
     <!--Register components container-->
     <ScrollView
-        android:id="@+id/register_form"
+        android:id="@+id/registerForm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <!--Register with e-mail-->
         <LinearLayout
-            android:id="@+id/email_register_form"
+            android:id="@+id/emailRegisterForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -59,7 +59,7 @@
             </android.support.design.widget.TextInputLayout>
             <!--Register button-->
             <Button
-                android:id="@+id/email_register_button"
+                android:id="@+id/emailRegisterButton"
                 style="@android:style/TextAppearance.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

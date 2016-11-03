@@ -76,15 +76,14 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void hideProgress() {
-        mLoginForm.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showProgress() {
-        mLoginForm.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
+    public void showProgress(boolean state) {
+        if (state) {
+            mLoginForm.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mLoginForm.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 }
 

@@ -25,10 +25,10 @@ public class LoginPresenter implements ILoginPresenter {
                 mView.showProgress(false);
                 switch (error) {
                     case INVALID_USER:
-                        mView.showInvalidUserError();
+                        mView.showError(ILoginView.Error.INVALID_USER);
                         break;
                     case WRONG_PASSWORD:
-                        mView.showWrongPasswordError();
+                        mView.showError(ILoginView.Error.WRONG_PASSWORD);
                         break;
                 }
             }
@@ -49,6 +49,7 @@ public class LoginPresenter implements ILoginPresenter {
 
     @Override
     public void signInWithEmail(String email, String password) {
+        mView.clearErrors();
         mView.showProgress(true);
         mModel.signInWithEmail(email, password);
     }

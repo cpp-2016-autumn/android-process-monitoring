@@ -35,4 +35,11 @@
     <string name="action_register_short">Register</string>
     <string name="action_settings">Settings</string>
     <string name="text_invalid_email">Invalid e-mail!</string>
+    <string name="text_sign_out">Sign out</string>
+    <string name="msg_app_pin_changed">Application pin changed successfully</string>
+    <string name="msg_client_pin_changed">Client pin changed successfully!</string>
+    <string name="msg_password_changed">Password changed successfully!</string>
+    <string name="text_different_passwords">Passwords are different!</string>
+    <string name="text_weak_pin">Weak pin</string>
+    <string name="text_different_pins">Pins are different!</string>
 </resources>

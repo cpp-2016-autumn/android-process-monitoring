@@ -17,6 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <Button
+                android:id="@+id/signOutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_sign_out"
+                android:layout_marginBottom="@dimen/padding_settings_group"/>
+
             <!--Separator-->
             <TextView
                 android:layout_width="match_parent"
@@ -87,7 +94,7 @@
                     android:layout_height="wrap_content"
                     app:hintEnabled="false">
                     <EditText
-                        android:id="@+id/pin"
+                        android:id="@+id/appPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_pin"
@@ -99,7 +106,7 @@
                     android:layout_height="wrap_content"
                     app:hintEnabled="false">
                     <EditText
-                        android:id="@+id/pinRepeat"
+                        android:id="@+id/appPinRepeat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_pin_repeat"
@@ -107,7 +114,7 @@
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
                 <Button
-                    android:id="@+id/changePinBtn"
+                    android:id="@+id/changeAppPinBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/text_change_pin"/>

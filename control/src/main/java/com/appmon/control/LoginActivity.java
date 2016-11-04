@@ -66,13 +66,15 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void showWrongPasswordError() {
-        mPasswordField.setError(getString(R.string.text_wrong_password));
-    }
-
-    @Override
-    public void showInvalidUserError() {
-        mEmailField.setError(getString(R.string.text_user_does_not_exist));
+    public void showError(Error err) {
+        switch (err) {
+            case INVALID_USER:
+                mEmailField.setError(getString(R.string.text_user_does_not_exist));
+                break;
+            case WRONG_PASSWORD:
+                mPasswordField.setError(getString(R.string.text_wrong_password));
+                break;
+        }
     }
 
     @Override
@@ -84,6 +86,12 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             mLoginForm.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void clearErrors() {
+        mEmailField.setError(null);
+        mPasswordField.setError(null);
     }
 }
 

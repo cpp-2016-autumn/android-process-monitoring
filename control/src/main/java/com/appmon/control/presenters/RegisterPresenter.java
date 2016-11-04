@@ -4,7 +4,7 @@ import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.RegisterError;
 import com.appmon.control.views.IRegisterView;
 
-public class RegisterPresenter implements  IRegisterPresenter {
+public class RegisterPresenter implements IRegisterPresenter {
 
     private  IUserModel mModel;
     private IRegisterView mView = null;
@@ -25,13 +25,13 @@ public class RegisterPresenter implements  IRegisterPresenter {
                 mView.showProgress(false);
                 switch (error) {
                     case USER_EXISTS:
-                        mView.showUserExistsError();
+                        mView.showError(IRegisterView.Error.USER_EXISTS);
                         break;
                     case INVALID_EMAIL:
-                        mView.showInvalidEmailError();
+                        mView.showError(IRegisterView.Error.INVALID_EMAIL);
                         break;
                     case WEAK_PASSWORD:
-                        mView.showWeakPasswordError();
+                        mView.showError(IRegisterView.Error.WEAK_PASSWORD);
                         break;
                 }
             }
@@ -52,6 +52,7 @@ public class RegisterPresenter implements  IRegisterPresenter {
 
     @Override
     public void registerWithEmail(String email, String password) {
+        mView.clearErrors();
         mView.showProgress(true);
         mModel.registerWithEmail(email, password);
     }

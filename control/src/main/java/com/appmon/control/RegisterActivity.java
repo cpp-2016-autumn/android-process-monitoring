@@ -67,18 +67,18 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
     }
 
     @Override
-    public void showUserExistsError() {
-        mEmailField.setError(getString(R.string.text_user_exists));
-    }
-
-    @Override
-    public void showWeakPasswordError() {
-        mPasswordField.setError(getString(R.string.text_weak_password));
-    }
-
-    @Override
-    public void showInvalidEmailError() {
-        mEmailField.setError(getString(R.string.text_invalid_email));
+    public void showError(Error err) {
+        switch (err) {
+            case INVALID_EMAIL:
+                mEmailField.setError(getString(R.string.text_invalid_email));
+                break;
+            case USER_EXISTS:
+                mEmailField.setError(getString(R.string.text_user_exists));
+                break;
+            case WEAK_PASSWORD:
+                mPasswordField.setError(getString(R.string.text_weak_password));
+                break;
+        }
     }
 
     @Override
@@ -90,5 +90,11 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
             mRegisterForm.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void clearErrors() {
+        mEmailField.setError(null);
+        mPasswordField.setError(null);
     }
 }

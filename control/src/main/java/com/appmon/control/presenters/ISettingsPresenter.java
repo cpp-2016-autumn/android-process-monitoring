@@ -1,8 +1,10 @@
 package com.appmon.control.presenters;
 
-/**
- * Created by pacmancoder on 03.11.16.
- */
+import com.appmon.control.views.ISettingsView;
 
-public class ISettingsPresenter {
+public interface ISettingsPresenter extends IBasePresenter<ISettingsView> {
+    void changePassword(String password, String passwordRepeat);
+    void signOut();
+    void changeAppPin(String pin, String pinRepeat);
+    void changeClientPin(String pin);
 }

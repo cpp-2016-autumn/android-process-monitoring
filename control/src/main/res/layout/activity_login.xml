@@ -34,13 +34,14 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/emailField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:nextFocusForward="@+id/passwordField"/>
             </android.support.design.widget.TextInputLayout>
             <!--Password-->
             <android.support.design.widget.TextInputLayout
@@ -53,7 +54,7 @@
                     android:hint="@string/prompt_password"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
+                    android:imeOptions="actionGo"
                     android:inputType="textPassword"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -65,12 +66,12 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/text_login" />
         </LinearLayout>
-    </ScrollView>
 
-    <Button
-        android:id="@+id/forgotPasswordBtn"
-        android:text="@string/text_forgot_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_between_buttons"/>
+        <Button
+            android:id="@+id/forgotPasswordBtn"
+            android:text="@string/text_forgot_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_between_buttons"/>
+    </ScrollView>
 </LinearLayout>

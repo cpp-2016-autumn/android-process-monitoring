@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.views.IWelcomeView;
 
+/**
+ * Welcome presenter class
+ */
 public class WelcomePresenter implements IWelcomePresenter {
 
     private IUserModel mModel;
@@ -19,18 +22,24 @@ public class WelcomePresenter implements IWelcomePresenter {
     @Override
     public void checkUserState() {
         if (mModel.getUserID() != null) {
-            mView.startDeviceListActivity();
+            if (mView != null) {
+                mView.startDeviceListActivity();
+            }
         }
     }
 
     @Override
     public void login() {
-        mView.startLoginActivity();
+        if (mView != null) {
+            mView.startLoginActivity();
+        }
     }
 
     @Override
     public void register() {
-        mView.startRegisterActivity();
+        if (mView != null) {
+            mView.startRegisterActivity();
+        }
     }
 
     @Override

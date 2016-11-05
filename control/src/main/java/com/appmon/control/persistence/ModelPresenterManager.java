@@ -1,6 +1,7 @@
 package com.appmon.control.persistence;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.appmon.control.ControlApp;
 import com.appmon.control.models.user.IUserModel;
@@ -15,6 +16,13 @@ import com.appmon.control.presenters.SettingsPresenter;
 import com.appmon.control.presenters.WelcomePresenter;
 
 
+/**
+ * Singleton class, which creates presenters, objects and makes
+ * linkage between them.
+ *
+ * All initializations are made lazy for avoiding big initial
+ * application loading times.
+ */
 public class ModelPresenterManager {
     // Singleton
     private static ModelPresenterManager ourInstance = null;
@@ -26,34 +34,51 @@ public class ModelPresenterManager {
         return ourInstance;
     }
     // === Persistent objects ===
+    // Model
+    private IUserModel mUserModel = null;
     // Presenters
-    private IWelcomePresenter mWelcomePresenter;
-    private ILoginPresenter mLoginPresenter;
-    private IRegisterPresenter mRegisterPresenter;
-    private ISettingsPresenter mSettingsPresenter;
+    private IWelcomePresenter mWelcomePresenter = null;
+    private ILoginPresenter mLoginPresenter = null;
+    private IRegisterPresenter mRegisterPresenter = null;
+    private ISettingsPresenter mSettingsPresenter = null;
 
     private ModelPresenterManager() {
-        IUserModel mUserModel = new UserModel(ControlApp.getContext()
-                .getSharedPreferences("user", Context.MODE_PRIVATE));
-        mWelcomePresenter = new WelcomePresenter(mUserModel);
-        mLoginPresenter = new LoginPresenter(mUserModel);
-        mRegisterPresenter = new RegisterPresenter(mUserModel);
-        mSettingsPresenter = new SettingsPresenter(mUserModel);
+        SharedPreferences pref = null;
+        if (ControlApp.getContext() != null) {
+            pref = ControlApp.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        }
+        mUserModel = new UserModel(pref);
     }
 
-    public IWelcomePresenter getWelcomePresenter() {
+    private IUserModel getUserModel() {
+        return mUserModel;
+    }
+
+    public synchronized IWelcomePresenter getWelcomePresenter() {
+        if (mWelcomePresenter == null) {
+            mWelcomePresenter = new WelcomePresenter(getUserModel());
+        }
         return mWelcomePresenter;
     }
 
-    public ILoginPresenter getLoginPresenter() {
+    public synchronized ILoginPresenter getLoginPresenter() {
+        if (mLoginPresenter == null) {
+            mLoginPresenter = new LoginPresenter(getUserModel());
+        }
         return mLoginPresenter;
     }
 
-    public IRegisterPresenter getRegisterPresenter() {
+    public synchronized IRegisterPresenter getRegisterPresenter() {
+        if (mRegisterPresenter == null) {
+            mRegisterPresenter = new RegisterPresenter(getUserModel());
+        }
         return mRegisterPresenter;
     }
 
-    public ISettingsPresenter getSettingsPresenter() {
+    public synchronized ISettingsPresenter getSettingsPresenter() {
+        if (mSettingsPresenter == null) {
+            mSettingsPresenter = new SettingsPresenter(getUserModel());
+        }
         return  mSettingsPresenter;
     }
 }

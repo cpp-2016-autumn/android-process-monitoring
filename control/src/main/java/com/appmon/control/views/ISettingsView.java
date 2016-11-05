@@ -18,4 +18,5 @@ public interface ISettingsView extends IBaseView {
     void showInputError(InputError err);
     void clearInputErrors();
     void startWelcomeActivity();
+    void clearFocus();
 }

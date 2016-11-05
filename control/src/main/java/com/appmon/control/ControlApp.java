@@ -3,6 +3,10 @@ package com.appmon.control;
 import android.app.Application;
 import android.content.Context;
 
+/**
+ * Application class. Can be used for requesting
+ * global objects.
+ */
 public class ControlApp extends Application {
     static Context sContext;
 
@@ -12,7 +16,7 @@ public class ControlApp extends Application {
         sContext = getApplicationContext();
     }
 
-    // get global app context
+    /// returns global app context
     public static Context getContext() {
         return ControlApp.sContext;
     }

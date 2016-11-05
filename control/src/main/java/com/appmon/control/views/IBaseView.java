@@ -1,4 +1,4 @@
 package com.appmon.control.views;
 
-// Marker interface;
+// Base View Marker interface;
 public interface IBaseView {}

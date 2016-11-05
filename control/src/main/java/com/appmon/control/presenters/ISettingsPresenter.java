@@ -2,6 +2,9 @@ package com.appmon.control.presenters;
 
 import com.appmon.control.views.ISettingsView;
 
+/**
+ * Settings activity interface
+ */
 public interface ISettingsPresenter extends IBasePresenter<ISettingsView> {
     void changePassword(String password, String passwordRepeat);
     void signOut();

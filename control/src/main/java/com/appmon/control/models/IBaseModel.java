@@ -1,8 +1,5 @@
 package com.appmon.control.models;
 
-/**
- * Created by pacmancoder on 03.11.16.
- */
-
+/// Base Model marker interface
 public interface IBaseModel {
 }

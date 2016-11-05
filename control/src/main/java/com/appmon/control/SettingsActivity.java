@@ -1,12 +1,17 @@
 package com.appmon.control;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.input.InputManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appmon.control.persistence.ModelPresenterManager;
@@ -22,11 +27,16 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     EditText mAppPinField;
     EditText mRepeatAppPinField;
     EditText mClientPinField;
+    View mContentLayout;
+
+    InputMethodManager mInputManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mContentLayout = findViewById(R.id.contentLayout);
+        mContentLayout.requestFocus();
+        mInputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         // bind presenter
         mPresenter = ModelPresenterManager.getInstance().getSettingsPresenter();
         mPresenter.attachView(this);
@@ -44,7 +54,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
                 mPresenter.signOut();
             }
         });
-        Button changePasswordBtn = (Button) findViewById(R.id.changePasswordBtn);
+        final Button changePasswordBtn = (Button) findViewById(R.id.changePasswordBtn);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
                         mRepeatPasswordField.getText().toString());
             }
         });
-        Button changeAppPinBtn = (Button) findViewById(R.id.changeAppPinBtn);
+        final Button changeAppPinBtn = (Button) findViewById(R.id.changeAppPinBtn);
         changeAppPinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,11 +72,33 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
                         mRepeatAppPinField.getText().toString());
             }
         });
-        Button changeClientPinBtn = (Button) findViewById(R.id.changeClientPinBtn);
+        final Button changeClientPinBtn = (Button) findViewById(R.id.changeClientPinBtn);
         changeClientPinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.changeClientPin(mClientPinField.getText().toString());
+            }
+        });
+        // bind actions
+        mRepeatPasswordField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                changePasswordBtn.callOnClick();
+                return true;
+            }
+        });
+        mRepeatAppPinField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                changeAppPinBtn.callOnClick();
+                return true;
+            }
+        });
+        mClientPinField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                changeClientPinBtn.callOnClick();
+                return true;
             }
         });
     }
@@ -104,18 +136,23 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
         switch (err) {
             case WEAK_PASSWORD:
                 mPasswordField.setError(getString(R.string.text_weak_password));
+                mPasswordField.requestFocus();
                 break;
             case DIFFERENT_PASSWORDS:
                 mRepeatPasswordField.setError(getString(R.string.text_different_passwords));
+                mRepeatPasswordField.requestFocus();
                 break;
             case WEAK_APP_PIN:
                 mAppPinField.setError(getString(R.string.text_weak_pin));
+                mAppPinField.requestFocus();
                 break;
             case DIFFERENT_APP_PINS:
                 mRepeatAppPinField.setError(getString(R.string.text_different_pins));
+                mRepeatAppPinField.requestFocus();
                 break;
             case WEAK_CLIENT_PIN:
                 mClientPinField.setError(getString(R.string.text_weak_pin));
+                mClientPinField.requestFocus();
                 break;
         }
     }
@@ -136,5 +173,14 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
                 Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(deviceListActivity);
         finish();
+    }
+
+    @Override
+    public void clearFocus() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            mInputManager.hideSoftInputFromWindow(view.getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 }

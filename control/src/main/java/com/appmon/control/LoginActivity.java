@@ -3,16 +3,18 @@ package com.appmon.control;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appmon.control.persistence.ModelPresenterManager;
 import com.appmon.control.presenters.ILoginPresenter;
 import com.appmon.control.views.ILoginView;
-// TODO: close parrent activity on finish
+
 public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     private ILoginPresenter mPresenter;
@@ -25,7 +27,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // attach presenter
         mPresenter = ModelPresenterManager.getInstance().getLoginPresenter();
         mPresenter.attachView(this);
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         mLoginForm = findViewById(R.id.loginForm);
         mEmailField = (EditText) findViewById(R.id.emailField);
         mPasswordField = (EditText) findViewById(R.id.passwordField);
-        Button signInButton = (Button) findViewById(R.id.emailSignInButton);
+        final Button signInButton = (Button) findViewById(R.id.emailSignInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,10 +49,19 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         passwordResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.resetPassword();
+                mPresenter.resetPassword(mEmailField.getText().toString());
+            }
+        });
+        // Bind action to SignIn button click
+        mPasswordField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                signInButton.callOnClick();
+                return true;
             }
         });
     }
+
 
     @Override
     protected void onResume() {
@@ -96,11 +106,13 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void showInputError(InputError err) {
         switch (err) {
-            case INVALID_USER:
+            case INVALID_EMAIL:
                 mEmailField.setError(getString(R.string.text_user_does_not_exist));
+                mEmailField.requestFocus();
                 break;
             case WRONG_PASSWORD:
                 mPasswordField.setError(getString(R.string.text_wrong_password));
+                mEmailField.requestFocus();
                 break;
         }
     }

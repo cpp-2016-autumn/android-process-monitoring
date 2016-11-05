@@ -2,7 +2,7 @@ package com.appmon.control.views;
 
 public interface ILoginView extends IBaseView {
     enum InputError {
-        INVALID_USER,
+        INVALID_EMAIL,
         WRONG_PASSWORD,
     }
     enum Message {

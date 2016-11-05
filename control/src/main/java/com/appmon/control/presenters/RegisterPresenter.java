@@ -3,15 +3,20 @@ package com.appmon.control.presenters;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.views.IRegisterView;
 
+/**
+ * Register presenter class.
+ * IUserMode Dependency.
+ */
 public class RegisterPresenter implements IRegisterPresenter {
 
-    private  IUserModel mModel;
+    private IUserModel mModel;
     private IRegisterView mView = null;
 
     private IUserModel.IRegisterListener mRegisterListener;
 
     public RegisterPresenter(IUserModel model) {
         mModel = model;
+        // init register listener
         mRegisterListener = new IUserModel.IRegisterListener() {
             @Override
             public void onSuccess() {
@@ -38,6 +43,17 @@ public class RegisterPresenter implements IRegisterPresenter {
     }
 
     @Override
+    public void registerWithEmail(String email, String password) {
+        if (mView != null) {
+            mView.clearInputErrors();
+            mView.showProgress(true);
+        }
+        mModel.registerWithEmail(email, password);
+    }
+
+    // IBasePresenter
+
+    @Override
     public void attachView(IRegisterView view) {
         mView = view;
         mModel.addRegisterListener(mRegisterListener);
@@ -47,13 +63,6 @@ public class RegisterPresenter implements IRegisterPresenter {
     public void detachView() {
         mView = null;
         mModel.removeRegisterListener(mRegisterListener);
-    }
-
-    @Override
-    public void registerWithEmail(String email, String password) {
-        mView.clearInputErrors();
-        mView.showProgress(true);
-        mModel.registerWithEmail(email, password);
     }
 
 

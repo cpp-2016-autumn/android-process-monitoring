@@ -3,44 +3,54 @@ package com.appmon.control.models.user;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
+import com.appmon.control.utils.Validator;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /*
- * NOTE: Model implemetation at the moment is at most dummy
+ * NOTE: Model implementation at the moment is at most dummy,
+ * it just validates input for format correctness
  */
 public class UserModel implements IUserModel {
 
-    //private IAppServer mAuthService;
-
+    // listener sets
     private Set<IRegisterListener> mRegisterListeners = new HashSet<>();
     private Set<ISignInListener> mSignInListeners = new HashSet<>();
     private Set<IChangePasswordListener> mChangePasswordListeners = new HashSet<>();
     private Set<IChangeAppPinListener> mChangeAppPinListeners = new HashSet<>();
     private Set<IChangeClientPinListener> mChangeClientPinListener = new HashSet<>();
-    private Set<IPasswordResetListener> mPasswordResetListeners = new HashSet<>();
+    private Set<IResetPasswordListener> mResetPasswordListeners = new HashSet<>();
 
     private SharedPreferences mAndroidPref;
 
-    public UserModel(SharedPreferences androidPref /*, IAppServer authService*/) {
+    public UserModel(SharedPreferences androidPref) {
         mAndroidPref = androidPref;
-        //mAuthService = authService;
     }
 
     @Override
     public void signOut() {
+        // NOTE: For testing
         mAndroidPref.edit().putBoolean("signedIn", false).apply();
     }
 
     @Override
-    public void registerWithEmail(String login, String password) {
-        // NOTE: For testing
-        if (login.equals("error")) {
+    public void registerWithEmail(String email, String password) {
+        // early validation before firebase request
+        // determine error and notify all listeners if it happened
+        RegisterError err = null;
+        if (!Validator.validateEmail(email)) {
+            err = RegisterError.INVALID_EMAIL;
+        } else if (!Validator.validatePassword(password)) {
+            err = RegisterError.WEAK_PASSWORD;
+        }
+        if (err != null) {
             for (IRegisterListener l : mRegisterListeners) {
-                l.onFail(RegisterError.INVALID_EMAIL);
+                l.onFail(err);
             }
             return;
         }
+        // TODO: Firebase register
         mAndroidPref.edit().putBoolean("signedIn", true).apply();
         for (IRegisterListener l : mRegisterListeners) {
             l.onSuccess();
@@ -48,14 +58,21 @@ public class UserModel implements IUserModel {
     }
 
     @Override
-    public void signInWithEmail(String login, String password) {
-        if (password.equals("error")) {
+    public void signInWithEmail(String email, String password) {
+        // early validation before firebase request
+        SignInError err = null;
+        if (!Validator.validateEmail(email)) {
+            err = SignInError.INVALID_EMAIL;
+        } else if (!Validator.validatePassword(password)) {
+            err = SignInError.WRONG_PASSWORD;
+        }
+        if (err != null) {
             for (ISignInListener l : mSignInListeners) {
-                l.onFail(SignInError.WRONG_PASSWORD);
+                l.onFail(err);
             }
             return;
         }
-        // NOTE: For testing
+        // TODO: Firebase sign in
         mAndroidPref.edit().putBoolean("signedIn", true).apply();
         for (ISignInListener l : mSignInListeners) {
             l.onSuccess();
@@ -64,49 +81,58 @@ public class UserModel implements IUserModel {
 
     @Override
     public void changePassword(String password) {
-        // NOTE: For testing
-        if (password.length() < 6) {
+        // early validation
+        if (!Validator.validatePassword(password)) {
             for (IChangePasswordListener l : mChangePasswordListeners) {
                 l.onFail(ChangePasswordError.WEAK_PASSWORD);
             }
-        } else {
-            for (IChangePasswordListener l : mChangePasswordListeners) {
-                l.onSuccess();
-            }
+            return;
+        }
+        // TODO: Firebase change password
+        for (IChangePasswordListener l : mChangePasswordListeners) {
+            l.onSuccess();
         }
     }
 
     @Override
-    public void changeAppPin(int pin) {
-        // NOTE: For testing
-        if (pin <= 99 ) {
+    public void changeAppPin(String pin) {
+        // validation
+        if (!Validator.validatePin(pin)) {
             for (IChangeAppPinListener l : mChangeAppPinListeners) {
                 l.onFail(ChangeAppPinError.WEAK_PIN);
             }
-        } else {
-            for (IChangeAppPinListener l : mChangeAppPinListeners) {
-                l.onSuccess();
-            }
+            return;
+        }
+        // TODO: change App pin
+        for (IChangeAppPinListener l : mChangeAppPinListeners) {
+            l.onSuccess();
         }
     }
 
     @Override
-    public void changeClientPin(int pin) {
-        // NOTE: For testing
-        if (pin <= 99 ) {
+    public void changeClientPin(String pin) {
+        // early validation
+        if (!Validator.validatePin(pin)) {
             for (IChangeClientPinListener l : mChangeClientPinListener) {
                 l.onFail(ChangeClientPinError.WEAK_PIN);
             }
-        } else {
-            for (IChangeClientPinListener l : mChangeClientPinListener) {
-                l.onSuccess();
-            }
+        }
+        // TODO: Write pin to Firebase
+        for (IChangeClientPinListener l : mChangeClientPinListener) {
+            l.onSuccess();
         }
     }
 
     @Override
-    public void resetPassword() {
-        for (IPasswordResetListener l: mPasswordResetListeners) {
+    public void resetPassword(String email) {
+        if (!Validator.validateEmail(email)) {
+            for (IResetPasswordListener l : mResetPasswordListeners) {
+                l.onFail(ResetPasswordError.INVALID_USER);
+            }
+            return;
+        }
+        // TODO: Firebase reset
+        for (IResetPasswordListener l: mResetPasswordListeners) {
             l.onSuccess();
         }
     }
@@ -114,6 +140,7 @@ public class UserModel implements IUserModel {
     @Nullable
     @Override
     public String getUserID() {
+        // TODO: Firebase get UID
         if (mAndroidPref.getBoolean("signedIn", false)) {
             return "UID";
         }
@@ -148,8 +175,8 @@ public class UserModel implements IUserModel {
     }
 
     @Override
-    public void addPasswordResetListener(IPasswordResetListener listener) {
-        mPasswordResetListeners.add(listener);
+    public void addResetPasswordListener(IResetPasswordListener listener) {
+        mResetPasswordListeners.add(listener);
     }
 
     @Override
@@ -178,7 +205,7 @@ public class UserModel implements IUserModel {
     }
 
     @Override
-    public void removePasswordResetListener(IPasswordResetListener listener) {
-        mPasswordResetListeners.remove(listener);
+    public void removeResetPasswordListener(IResetPasswordListener listener) {
+        mResetPasswordListeners.remove(listener);
     }
 }

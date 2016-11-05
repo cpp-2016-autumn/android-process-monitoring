@@ -60,7 +60,6 @@
             <!--Register button-->
             <Button
                 android:id="@+id/emailRegisterButton"
-                style="@android:style/TextAppearance.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

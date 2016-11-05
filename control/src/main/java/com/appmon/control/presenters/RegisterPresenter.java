@@ -1,7 +1,6 @@
 package com.appmon.control.presenters;
 
 import com.appmon.control.models.user.IUserModel;
-import com.appmon.control.models.user.RegisterError;
 import com.appmon.control.views.IRegisterView;
 
 public class RegisterPresenter implements IRegisterPresenter {
@@ -21,17 +20,17 @@ public class RegisterPresenter implements IRegisterPresenter {
             }
 
             @Override
-            public void onFail(RegisterError error) {
+            public void onFail(IUserModel.RegisterError error) {
                 mView.showProgress(false);
                 switch (error) {
                     case USER_EXISTS:
-                        mView.showError(IRegisterView.Error.USER_EXISTS);
+                        mView.showInputError(IRegisterView.InputError.USER_EXISTS);
                         break;
                     case INVALID_EMAIL:
-                        mView.showError(IRegisterView.Error.INVALID_EMAIL);
+                        mView.showInputError(IRegisterView.InputError.INVALID_EMAIL);
                         break;
                     case WEAK_PASSWORD:
-                        mView.showError(IRegisterView.Error.WEAK_PASSWORD);
+                        mView.showInputError(IRegisterView.InputError.WEAK_PASSWORD);
                         break;
                 }
             }
@@ -52,7 +51,7 @@ public class RegisterPresenter implements IRegisterPresenter {
 
     @Override
     public void registerWithEmail(String email, String password) {
-        mView.clearErrors();
+        mView.clearInputErrors();
         mView.showProgress(true);
         mModel.registerWithEmail(email, password);
     }

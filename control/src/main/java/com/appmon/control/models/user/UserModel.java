@@ -1,30 +1,35 @@
 package com.appmon.control.models.user;
 
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * NOTE: Model implemetation at the moment is at most dummy
+ */
 public class UserModel implements IUserModel {
 
     //private IAppServer mAuthService;
 
     private Set<IRegisterListener> mRegisterListeners = new HashSet<>();
     private Set<ISignInListener> mSignInListeners = new HashSet<>();
-    private Set<ISignOutListener> mSignOutListeners = new HashSet<>();
     private Set<IChangePasswordListener> mChangePasswordListeners = new HashSet<>();
     private Set<IChangeAppPinListener> mChangeAppPinListeners = new HashSet<>();
     private Set<IChangeClientPinListener> mChangeClientPinListener = new HashSet<>();
+    private Set<IPasswordResetListener> mPasswordResetListeners = new HashSet<>();
 
-    public UserModel(/*IAppServer authService*/) {
+    private SharedPreferences mAndroidPref;
+
+    public UserModel(SharedPreferences androidPref /*, IAppServer authService*/) {
+        mAndroidPref = androidPref;
         //mAuthService = authService;
     }
 
     @Override
     public void signOut() {
-        for (ISignOutListener l : mSignOutListeners) {
-            l.onSuccess();
-        }
+        mAndroidPref.edit().putBoolean("signedIn", false).apply();
     }
 
     @Override
@@ -36,6 +41,7 @@ public class UserModel implements IUserModel {
             }
             return;
         }
+        mAndroidPref.edit().putBoolean("signedIn", true).apply();
         for (IRegisterListener l : mRegisterListeners) {
             l.onSuccess();
         }
@@ -43,7 +49,14 @@ public class UserModel implements IUserModel {
 
     @Override
     public void signInWithEmail(String login, String password) {
+        if (password.equals("error")) {
+            for (ISignInListener l : mSignInListeners) {
+                l.onFail(SignInError.WRONG_PASSWORD);
+            }
+            return;
+        }
         // NOTE: For testing
+        mAndroidPref.edit().putBoolean("signedIn", true).apply();
         for (ISignInListener l : mSignInListeners) {
             l.onSuccess();
         }
@@ -91,10 +104,19 @@ public class UserModel implements IUserModel {
         }
     }
 
+    @Override
+    public void resetPassword() {
+        for (IPasswordResetListener l: mPasswordResetListeners) {
+            l.onSuccess();
+        }
+    }
 
     @Nullable
     @Override
     public String getUserID() {
+        if (mAndroidPref.getBoolean("signedIn", false)) {
+            return "UID";
+        }
         return null;
     }
 
@@ -108,11 +130,6 @@ public class UserModel implements IUserModel {
     @Override
     public void addRegisterListener(IRegisterListener listener) {
         mRegisterListeners.add(listener);
-    }
-
-    @Override
-    public void addSignOutListener(ISignOutListener listener) {
-        mSignOutListeners.add(listener);
     }
 
     @Override
@@ -131,6 +148,11 @@ public class UserModel implements IUserModel {
     }
 
     @Override
+    public void addPasswordResetListener(IPasswordResetListener listener) {
+        mPasswordResetListeners.add(listener);
+    }
+
+    @Override
     public void removeSignInListener(ISignInListener listener) {
         mSignInListeners.remove(listener);
     }
@@ -138,11 +160,6 @@ public class UserModel implements IUserModel {
     @Override
     public void removeRegisterListener(IRegisterListener listener) {
         mRegisterListeners.remove(listener);
-    }
-
-    @Override
-    public void removeSignOutListener(ISignOutListener listener) {
-        mSignOutListeners.remove(listener);
     }
 
     @Override
@@ -158,5 +175,10 @@ public class UserModel implements IUserModel {
     @Override
     public void removeChangeClientPinListener(IChangeClientPinListener listener) {
         mChangeClientPinListener.remove(listener);
+    }
+
+    @Override
+    public void removePasswordResetListener(IPasswordResetListener listener) {
+        mPasswordResetListeners.remove(listener);
     }
 }

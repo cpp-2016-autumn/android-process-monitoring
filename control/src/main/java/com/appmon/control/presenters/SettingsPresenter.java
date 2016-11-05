@@ -1,7 +1,6 @@
 package com.appmon.control.presenters;
 
 import com.appmon.control.models.user.IUserModel;
-import com.appmon.control.models.user.SignOutError;
 import com.appmon.control.views.ISettingsView;
 
 public class SettingsPresenter implements ISettingsPresenter {
@@ -9,20 +8,57 @@ public class SettingsPresenter implements ISettingsPresenter {
     private IUserModel mModel;
     private ISettingsView mView = null;
 
-    private IUserModel.ISignOutListener mSignOutListener = null;
+    private IUserModel.IChangePasswordListener mChangePasswordListener = null;
+    private IUserModel.IChangeAppPinListener mChangeAppPinListener = null;
+    private IUserModel.IChangeClientPinListener mChangeClientPinListener = null;
 
     public SettingsPresenter(IUserModel model) {
         mModel = model;
-
-        mSignOutListener = new IUserModel.ISignOutListener() {
+        mChangePasswordListener = new IUserModel.IChangePasswordListener() {
             @Override
             public void onSuccess() {
-                mView.startWelcomeActivity();
+                mView.showMessage(ISettingsView.Message.PASSWORD_CHANGED);
             }
 
             @Override
-            public void onFail(SignOutError error) {
-                // TODO: signOut Error ?
+            public void onFail(IUserModel.ChangePasswordError error) {
+                switch (error) {
+                    case WEAK_PASSWORD:
+                        mView.showInputError(ISettingsView.InputError.WEAK_PASSWORD);
+                        break;
+                }
+            }
+        };
+
+        mChangeAppPinListener = new IUserModel.IChangeAppPinListener() {
+            @Override
+            public void onSuccess() {
+                mView.showMessage(ISettingsView.Message.APP_PIN_CHANGED);
+            }
+
+            @Override
+            public void onFail(IUserModel.ChangeAppPinError error) {
+                switch (error) {
+                    case WEAK_PIN:
+                        mView.showInputError(ISettingsView.InputError.WEAK_APP_PIN);
+                        break;
+                }
+            }
+        };
+
+        mChangeClientPinListener = new IUserModel.IChangeClientPinListener() {
+            @Override
+            public void onSuccess() {
+                mView.showMessage(ISettingsView.Message.CLIENT_PIN_CHANGED);
+            }
+
+            @Override
+            public void onFail(IUserModel.ChangeClientPinError error) {
+                switch (error) {
+                    case WEAK_PIN:
+                        mView.showInputError(ISettingsView.InputError.WEAK_CLIENT_PIN);
+                        break;
+                }
             }
         };
     }
@@ -30,19 +66,24 @@ public class SettingsPresenter implements ISettingsPresenter {
     @Override
     public void attachView(ISettingsView view) {
         mView = view;
-        mModel.addSignOutListener(mSignOutListener);
+        mModel.addChangePasswordListener(mChangePasswordListener);
+        mModel.addChangeAppPinListener(mChangeAppPinListener);
+        mModel.addChangeClientPinListener(mChangeClientPinListener);
     }
 
     @Override
     public void detachView() {
         mView = null;
-        mModel.removeSignOutListener(mSignOutListener);
+        mModel.removeChangePasswordListener(mChangePasswordListener);
+        mModel.removeChangeAppPinListener(mChangeAppPinListener);
+        mModel.removeChangeClientPinListener(mChangeClientPinListener);
     }
 
     @Override
     public void changePassword(String password, String passwordRepeat) {
+        mView.clearInputErrors();
         if (!password.equals(passwordRepeat)) {
-            mView.showError(ISettingsView.Error.DIFFERENT_PASSWORDS);
+            mView.showInputError(ISettingsView.InputError.DIFFERENT_PASSWORDS);
             return;
         }
         mModel.changePassword(password);
@@ -51,19 +92,23 @@ public class SettingsPresenter implements ISettingsPresenter {
     @Override
     public void signOut() {
         mModel.signOut();
+        mView.clearInputErrors();
+        mView.startWelcomeActivity();
     }
 
     @Override
     public void changeAppPin(String pin, String pinRepeat) {
+        mView.clearInputErrors();
         if (!pin.equals(pinRepeat)) {
-            mView.showError(ISettingsView.Error.DIFFERENT_APP_PINS);
+            mView.showInputError(ISettingsView.InputError.DIFFERENT_APP_PINS);
             return;
         }
-        mModel.changeAppPin(Integer.getInteger(pin));
+        mModel.changeAppPin(Integer.parseInt(pin));
     }
 
     @Override
     public void changeClientPin(String pin) {
-        mModel.changeClientPin(Integer.getInteger(pin));
+        mView.clearInputErrors();
+        mModel.changeClientPin(Integer.parseInt(pin));
     }
 }

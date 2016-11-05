@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.appmon.control.persistence.ModelPresenterManager;
 import com.appmon.control.presenters.ILoginPresenter;
@@ -43,6 +44,13 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
                         mPasswordField.getText().toString());
             }
         });
+        Button passwordResetBtn = (Button) findViewById(R.id.forgotPasswordBtn);
+        passwordResetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.resetPassword();
+            }
+        });
     }
 
     @Override
@@ -60,21 +68,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void startDeviceListActivity() {
         Intent deviceListActivity = new Intent(this, DeviceListActivity.class);
-        deviceListActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        deviceListActivity.setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(deviceListActivity);
         finish();
-    }
-
-    @Override
-    public void showError(Error err) {
-        switch (err) {
-            case INVALID_USER:
-                mEmailField.setError(getString(R.string.text_user_does_not_exist));
-                break;
-            case WRONG_PASSWORD:
-                mPasswordField.setError(getString(R.string.text_wrong_password));
-                break;
-        }
     }
 
     @Override
@@ -89,7 +86,27 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void clearErrors() {
+    public void showMessage(Message msg) {
+        switch (msg) {
+            case PASSWORD_RESET_SENT:
+                Toast.makeText(this, R.string.text_password_reset_sent, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showInputError(InputError err) {
+        switch (err) {
+            case INVALID_USER:
+                mEmailField.setError(getString(R.string.text_user_does_not_exist));
+                break;
+            case WRONG_PASSWORD:
+                mPasswordField.setError(getString(R.string.text_wrong_password));
+                break;
+        }
+    }
+
+    @Override
+    public void clearInputErrors() {
         mEmailField.setError(null);
         mPasswordField.setError(null);
     }

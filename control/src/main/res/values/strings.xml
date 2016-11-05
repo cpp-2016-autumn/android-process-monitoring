@@ -42,4 +42,7 @@
     <string name="text_different_passwords">Passwords are different!</string>
     <string name="text_weak_pin">Weak pin</string>
     <string name="text_different_pins">Pins are different!</string>
+    <string name="text_network_error">Network error</string>
+    <string name="text_forgot_password">I forgot password</string>
+    <string name="text_password_reset_sent">Password reset e-mail have been sent</string>
 </resources>

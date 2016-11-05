@@ -1,5 +1,8 @@
 package com.appmon.control.persistence;
 
+import android.content.Context;
+
+import com.appmon.control.ControlApp;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.UserModel;
 import com.appmon.control.presenters.ILoginPresenter;
@@ -14,8 +17,12 @@ import com.appmon.control.presenters.WelcomePresenter;
 
 public class ModelPresenterManager {
     // Singleton
-    private static ModelPresenterManager ourInstance = new ModelPresenterManager();
-    public static ModelPresenterManager getInstance() {
+    private static ModelPresenterManager ourInstance = null;
+
+    public static synchronized ModelPresenterManager getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new ModelPresenterManager();
+        }
         return ourInstance;
     }
     // === Persistent objects ===
@@ -26,7 +33,8 @@ public class ModelPresenterManager {
     private ISettingsPresenter mSettingsPresenter;
 
     private ModelPresenterManager() {
-        IUserModel mUserModel = new UserModel(/*FirebaseAppServer.getInstance()*/);
+        IUserModel mUserModel = new UserModel(ControlApp.getContext()
+                .getSharedPreferences("user", Context.MODE_PRIVATE));
         mWelcomePresenter = new WelcomePresenter(mUserModel);
         mLoginPresenter = new LoginPresenter(mUserModel);
         mRegisterPresenter = new RegisterPresenter(mUserModel);

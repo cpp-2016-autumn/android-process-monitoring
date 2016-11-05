@@ -87,7 +87,8 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     public void showMessage(Message msg) {
         switch (msg) {
             case APP_PIN_CHANGED:
-                Toast.makeText(this, R.string.msg_app_pin_changed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_app_pin_changed, Toast.LENGTH_SHORT)
+                        .show();
                 break;
             case CLIENT_PIN_CHANGED:
                 Toast.makeText(this, R.string.msg_client_pin_changed, Toast.LENGTH_SHORT).show();
@@ -99,7 +100,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     }
 
     @Override
-    public void showError(Error err) {
+    public void showInputError(InputError err) {
         switch (err) {
             case WEAK_PASSWORD:
                 mPasswordField.setError(getString(R.string.text_weak_password));
@@ -120,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     }
 
     @Override
-    public void clearErrors() {
+    public void clearInputErrors() {
         mPasswordField.setError(null);
         mRepeatPasswordField.setError(null);
         mAppPinField.setError(null);
@@ -131,7 +132,8 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     @Override
     public void startWelcomeActivity() {
         Intent deviceListActivity = new Intent(this, WelcomeActivity.class);
-        deviceListActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        deviceListActivity.setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(deviceListActivity);
         finish();
     }

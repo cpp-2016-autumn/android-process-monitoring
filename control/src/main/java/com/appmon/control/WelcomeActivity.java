@@ -58,10 +58,9 @@ public class WelcomeActivity extends AppCompatActivity implements IWelcomeView {
     public void startDeviceListActivity() {
         // go to user home activity (Device List Activity)
         Intent deviceListActivity = new Intent(this, DeviceListActivity.class);
-        deviceListActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        deviceListActivity.setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
         startActivity(deviceListActivity);
-        // finish current activity (user can't use "back" button for returning to
-        // Welcome Activity
         finish();
     }
 

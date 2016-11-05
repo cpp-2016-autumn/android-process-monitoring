@@ -1,7 +1,7 @@
 package com.appmon.control.views;
 
 public interface ISettingsView extends IBaseView {
-    enum Error {
+    enum InputError {
         WEAK_PASSWORD,
         DIFFERENT_PASSWORDS,
         WEAK_APP_PIN,
@@ -15,7 +15,7 @@ public interface ISettingsView extends IBaseView {
     }
 
     void showMessage(Message msg);
-    void showError(Error err);
-    void clearErrors();
+    void showInputError(InputError err);
+    void clearInputErrors();
     void startWelcomeActivity();
 }

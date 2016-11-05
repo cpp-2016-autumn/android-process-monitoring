@@ -8,4 +8,5 @@ import com.appmon.control.views.ILoginView;
 
 public interface ILoginPresenter extends IBasePresenter<ILoginView> {
     void signInWithEmail(String email, String password);
+    void resetPassword();
 }

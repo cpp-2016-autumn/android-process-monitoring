@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.appmon.control.persistence.ModelPresenterManager;
 import com.appmon.control.presenters.IRegisterPresenter;
@@ -61,13 +62,14 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
     @Override
     public void startDeviceListActivity() {
         Intent deviceListActivity = new Intent(this, DeviceListActivity.class);
-        deviceListActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        deviceListActivity.setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(deviceListActivity);
         finish();
     }
 
     @Override
-    public void showError(Error err) {
+    public void showInputError(InputError err) {
         switch (err) {
             case INVALID_EMAIL:
                 mEmailField.setError(getString(R.string.text_invalid_email));
@@ -93,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
     }
 
     @Override
-    public void clearErrors() {
+    public void clearInputErrors() {
         mEmailField.setError(null);
         mPasswordField.setError(null);
     }

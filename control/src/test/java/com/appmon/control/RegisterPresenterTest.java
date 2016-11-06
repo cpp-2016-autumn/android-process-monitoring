@@ -4,21 +4,37 @@ import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.presenters.RegisterPresenter;
 import com.appmon.control.views.IRegisterView;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RegisterPresenterTest {
+
+    @Mock
+    private IUserModel mockedModel;
+    @Mock
+    private IRegisterView mockedView;
+
+    @Captor
+    private ArgumentCaptor<IUserModel.IRegisterListener> listener;
+
+    private RegisterPresenter presenter;
+
+    @Before
+    public void setup() {
+        presenter = new RegisterPresenter(mockedModel);
+        presenter.attachView(mockedView);
+    }
 
     @Test
     public void testRegister() {
-        IUserModel mockedModel = mock(IUserModel.class);
-        IRegisterView mockedView = mock(IRegisterView.class);
-        ArgumentCaptor<IUserModel.IRegisterListener> listener =
-                ArgumentCaptor.forClass(IUserModel.IRegisterListener.class);
-        RegisterPresenter presenter = new RegisterPresenter(mockedModel);
-        presenter.attachView(mockedView);
         // test callbacks code
         verify(mockedModel).addRegisterListener(listener.capture());
         // send success. is must start new activity and hide progress
@@ -47,11 +63,6 @@ public class RegisterPresenterTest {
 
     @Test
     public void listenersTest() {
-        IUserModel mockedModel = mock(IUserModel.class);
-        IRegisterView mockedView = mock(IRegisterView.class);
-        RegisterPresenter presenter = new RegisterPresenter(mockedModel);
-
-        presenter.attachView(mockedView);
         verify(mockedModel).addRegisterListener(
                 any(IUserModel.IRegisterListener.class));
 

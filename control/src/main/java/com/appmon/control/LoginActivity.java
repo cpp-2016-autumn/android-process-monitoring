@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
                 break;
             case WRONG_PASSWORD:
                 mPasswordField.setError(getString(R.string.text_wrong_password));
-                mEmailField.requestFocus();
+                mPasswordField.requestFocus();
                 break;
         }
     }

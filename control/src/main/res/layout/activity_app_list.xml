@@ -13,4 +13,11 @@
         android:id="@+id/appList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <!-- Centred "No devices" text view-->
+    <TextView
+        android:id="@+id/noDevicesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_no_applications"
+        android:visibility="gone"/>
 </FrameLayout>

@@ -4,9 +4,12 @@ import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 import com.appmon.client.initialization.login.LoginActivity;
+
+import java.util.List;
 
 /**
  * An {@link IntentService} subclass for handling service setup tasks.
@@ -53,9 +56,15 @@ public class SetupService extends IntentService {
      * Handle initialization.
      */
     private void handleInit(String userName) {
-        PackageManager p = getPackageManager();
+        //hide icon
+        PackageManager pm = getPackageManager();
         ComponentName componentName = new ComponentName(this, LoginActivity.class);
-        p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        //get application packages
+        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+        for (ApplicationInfo p : packages) {
+            //TODO: send app info to Firebase using shared library
+        }
     }
 
     /**

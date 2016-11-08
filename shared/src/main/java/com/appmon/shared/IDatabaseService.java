@@ -38,6 +38,20 @@ public interface IDatabaseService {
     void removeChildListener(DatabaseChildListener listener);
 
     /**
+     * Adds new listener to specified location.
+     * @param path location to add listener
+     * @param listener user-defined data listener.
+     * @return listener, passed as parameter
+     */
+    DatabaseValueListener addValueLsitener(String path, DatabaseValueListener listener);
+
+    /**
+     * Unregisters listener from database
+     * @param listener listener to remove
+     */
+    void removeValueListener(DatabaseValueListener listener);
+
+    /**
      * changes syncing policy ot specified location.
      * @param path path to some subtree
      * @param keepSynced sync flag

@@ -3,7 +3,7 @@ package com.appmon.shared;
 import android.support.annotation.Nullable;
 
 /**
- * Auth service interface. Can be used for signing in\out\up,
+ * Auth service interface. Can be used for signing in/out/up,
  * sending password reset email and getting current user.
  */
 public interface IAuthService {
@@ -39,7 +39,7 @@ public interface IAuthService {
     /**
      * Sends password reset e-mail to user
      * @param email e-mail of user, who requests password reset
-     * @param listener listener, which will handle succes and failure of action.
+     * @param listener listener, which will handle success and failure of action.
      *                 On failure passes {@link ResetPasswordError}. Null value can be
      *                 used for ignoring action result
      */

@@ -3,7 +3,7 @@ package com.appmon.control.models.user;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
-import com.appmon.control.utils.Validator;
+import com.appmon.shared.utils.Validator;
 
 import java.util.HashSet;
 import java.util.Set;

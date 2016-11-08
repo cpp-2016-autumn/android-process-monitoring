@@ -1,10 +1,10 @@
-package com.appmon.control;
+package com.appmon.shared;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import static com.appmon.control.utils.Validator.*;
+import static com.appmon.shared.utils.Validator.*;
 
 public class ValidatorUnitTest {
     @Test

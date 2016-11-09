@@ -8,6 +8,6 @@ package com.appmon.shared;
  * @param <E> Error value type
  */
 public abstract class ResultListener<V, E> {
-    void onSuccess(V value) {}
-    void onFailure(E error) {}
+    public void onSuccess(V value) {}
+    public void onFailure(E error) {}
 }

@@ -15,7 +15,7 @@ public class FirebaseCloudServices implements ICloudServices {
 
     private FirebaseCloudServices() {
         mAuthService = new FirebaseAuthService();
-        //// TODO: 11/10/2016 implement IDatabaseService
+        mDatabaseService = new FirebaseDatabaseService();
     }
 
 
@@ -26,7 +26,6 @@ public class FirebaseCloudServices implements ICloudServices {
 
     @Override
     public IDatabaseService getDatabase() {
-        //// TODO: 11/10/2016 implement IDatabaseService
-        throw new UnsupportedOperationException();
+        return mDatabaseService;
     }
 }

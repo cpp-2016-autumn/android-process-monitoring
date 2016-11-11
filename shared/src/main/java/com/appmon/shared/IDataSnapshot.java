@@ -1,5 +1,7 @@
 package com.appmon.shared;
 
+import android.support.annotation.NonNull;
+
 /**
  * Immutable data snapshot interface
  */
@@ -15,14 +17,14 @@ public interface IDataSnapshot {
      * @param path relative path
      * @return true if child exists
      */
-    boolean hasChild(String path);
+    boolean hasChild(@NonNull String path);
 
     /**
      * Returns snapshot of child located at given relative path
      * @param path relative path
      * @return immutable child snapshot
      */
-    IDataSnapshot child(String path);
+    IDataSnapshot child(@NonNull String path);
 
     /**
      * Returns current node child count

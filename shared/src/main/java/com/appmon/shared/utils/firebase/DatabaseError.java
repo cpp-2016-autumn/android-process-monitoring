@@ -1,4 +1,4 @@
-package com.appmon.shared;
+package com.appmon.shared.utils.firebase;
 
 /**
  * Wraps possible database errors

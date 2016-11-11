@@ -1,5 +1,7 @@
-package com.appmon.shared;
+package com.appmon.shared.utils.firebase;
 
+
+import com.appmon.shared.IDataSnapshot;
 
 /**
  * Value listener. It represented with abstract class
@@ -13,11 +15,11 @@ public abstract class DatabaseValueListener {
      * from database
      * @param error {@link DatabaseError} value which signalizes what caused problem
      */
-    void onCanceled(DatabaseError error) {}
+    public void onCanceled(DatabaseError error) {}
 
     /**
      *  Will be triggered when value were changed in current location
      * @param snapshot new immutable data snapshot of current location
      */
-    void onChanged(IDataSnapshot snapshot) {}
+    public void onChanged(IDataSnapshot snapshot) {}
 }

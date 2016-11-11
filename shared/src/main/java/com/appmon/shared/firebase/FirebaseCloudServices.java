@@ -10,6 +10,12 @@ import com.appmon.shared.IDatabaseService;
  */
 public class FirebaseCloudServices implements ICloudServices {
 
+    private static FirebaseCloudServices ourInstance = new FirebaseCloudServices();
+
+    public static FirebaseCloudServices getInstance() {
+        return ourInstance;
+    }
+
     private IAuthService mAuthService;
     private IDatabaseService mDatabaseService;
 

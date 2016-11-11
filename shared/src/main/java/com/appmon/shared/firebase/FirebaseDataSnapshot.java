@@ -1,24 +1,26 @@
-package com.appmon.shared;
+package com.appmon.shared.firebase;
 
 import android.support.annotation.NonNull;
 
+import com.appmon.shared.IDataSnapshot;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.Iterator;
 
 /**
  * Simple {@link com.google.firebase.database.DataSnapshot} wrapper
- * Created by Mike on 11/11/2016.
+ * Implements {@link IDataSnapshot}
  */
 
-public class FirebaseDataSnapshot implements IDataSnapshot {
+class FirebaseDataSnapshot implements IDataSnapshot {
 
-    DataSnapshot mDataSnapshot;
+    private DataSnapshot mDataSnapshot;
 
-    public FirebaseDataSnapshot(DataSnapshot snapshot){
+    FirebaseDataSnapshot(DataSnapshot snapshot){
         mDataSnapshot = snapshot;
     }
 
+    @Override
     public boolean exists() {
         return mDataSnapshot.exists();
     }

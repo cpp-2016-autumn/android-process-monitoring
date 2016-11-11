@@ -1,11 +1,8 @@
 package com.appmon.shared;
 
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.appmon.shared.utils.firebase.DatabaseChildListener;
-import com.appmon.shared.utils.firebase.DatabaseError;
-import com.appmon.shared.utils.firebase.DatabaseValueListener;
 
 /**
  * Provides access to some database storage
@@ -32,7 +29,7 @@ public interface IDatabaseService {
      * @param listener user-defined data listener.
      * @return listener, passed as parameter
      */
-    DatabaseChildListener addChildLsitener(String path, DatabaseChildListener listener);
+    DatabaseChildListener addChildListener(String path, @NonNull DatabaseChildListener listener);
 
     /**
      * Unregisters listener from database
@@ -46,7 +43,7 @@ public interface IDatabaseService {
      * @param listener user-defined data listener.
      * @return listener, passed as parameter
      */
-    DatabaseValueListener addValueLsitener(String path, DatabaseValueListener listener);
+    DatabaseValueListener addValueListener(String path, @NonNull DatabaseValueListener listener);
 
     /**
      * Unregisters listener from database

@@ -1,7 +1,5 @@
-package com.appmon.shared.utils.firebase;
+package com.appmon.shared;
 
-
-import com.appmon.shared.IDataSnapshot;
 
 /**
  * Value listener. It represented with abstract class

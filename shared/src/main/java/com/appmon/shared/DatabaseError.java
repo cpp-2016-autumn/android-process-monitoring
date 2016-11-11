@@ -1,4 +1,4 @@
-package com.appmon.shared.utils.firebase;
+package com.appmon.shared;
 
 /**
  * Wraps possible database errors
@@ -8,8 +8,6 @@ public enum DatabaseError {
     NETWORK_ERROR,
     /// on Firebase PERMISSION_DENIED
     ACCESS_DENIED,
-    //// on Firebase EXPIRED_TOKEN
-    FRESH_AUTH_NEEDED,
     /// all other errors
     INTERNAL_FAIL,
 }

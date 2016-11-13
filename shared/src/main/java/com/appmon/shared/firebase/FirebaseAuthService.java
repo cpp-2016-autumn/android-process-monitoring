@@ -6,8 +6,14 @@ import android.support.annotation.Nullable;
 import com.appmon.shared.IAuthService;
 import com.appmon.shared.IUser;
 import com.appmon.shared.ResultListener;
+import com.appmon.shared.exceptions.AuthEmailTakenException;
+import com.appmon.shared.exceptions.AuthException;
+import com.appmon.shared.exceptions.AuthInvalidEmailException;
+import com.appmon.shared.exceptions.AuthWeakPasswordException;
+import com.appmon.shared.exceptions.AuthWrongPasswordException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,7 +42,7 @@ class FirebaseAuthService implements IAuthService {
 
     @Override
     public void signInWithEmail(final String email, final String password,
-                                @Nullable final ResultListener<IUser, SignInError> listener) {
+                                @Nullable final ResultListener<IUser, Throwable> listener) {
         Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password);
         if (listener == null) {
             return;
@@ -49,20 +55,16 @@ class FirebaseAuthService implements IAuthService {
                     listener.onSuccess(mUser);
                 } else {
                     mUser = null;
-                    if (task.getException() instanceof FirebaseAuthInvalidUserException) {
-                        listener.onFailure(SignInError.INVALID_EMAIL);
-                    } else if (task.getException() instanceof
-                            FirebaseAuthInvalidCredentialsException) {
-                        listener.onFailure(SignInError.WRONG_PASSWORD);
-                    }
+                    listener.onFailure(toSignInError(task.getException()));
                 }
             }
         });
     }
 
+
     @Override
     public void registerWithEmail(final String email, final String password,
-                                  @Nullable final ResultListener<IUser, RegisterError> listener) {
+                                  @Nullable final ResultListener<IUser, Throwable> listener) {
         Task<AuthResult> task = mAuth.createUserWithEmailAndPassword(email, password);
         if (listener == null) {
             return;
@@ -75,14 +77,7 @@ class FirebaseAuthService implements IAuthService {
                     listener.onSuccess(mUser);
                 } else {
                     mUser = null;
-                    if (task.getException() instanceof FirebaseAuthWeakPasswordException) {
-                        listener.onFailure(RegisterError.WEAK_PASSWORD);
-                    } else if (task.getException() instanceof
-                            FirebaseAuthInvalidCredentialsException) {
-                        listener.onFailure(RegisterError.INVALID_EMAIL);
-                    } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                        listener.onFailure(RegisterError.USER_EXISTS);
-                    }
+                    listener.onFailure(toRegisterError(task.getException()));
                 }
             }
         });
@@ -90,7 +85,7 @@ class FirebaseAuthService implements IAuthService {
 
     @Override
     public void resetPassword(final String email,
-                              @Nullable final ResultListener<Void, ResetPasswordError> listener) {
+                              @Nullable final ResultListener<Void, Throwable> listener) {
         Task<Void> task = mAuth.sendPasswordResetEmail(email);
         if (listener == null) {
             return;
@@ -101,9 +96,7 @@ class FirebaseAuthService implements IAuthService {
                 if (task.isSuccessful()) {
                     listener.onSuccess(null);
                 } else {
-                    if (task.getException() instanceof FirebaseAuthInvalidUserException) {
-                        listener.onFailure(ResetPasswordError.INVALID_EMAIL);
-                    }
+                    listener.onFailure(toPasswordError(task.getException()));
                 }
             }
         });
@@ -120,4 +113,38 @@ class FirebaseAuthService implements IAuthService {
     public IUser getUser() {
         return mUser;
     }
+
+
+    private Throwable toSignInError(Exception e) {
+        Throwable err = new AuthException(e.getCause());
+        if (e instanceof FirebaseAuthInvalidUserException) {
+            err = new AuthInvalidEmailException(e.getCause());
+        } else if (e instanceof
+                FirebaseAuthInvalidCredentialsException) {
+            err = new AuthWrongPasswordException(e.getCause());
+        }
+        return err;
+    }
+
+    private Throwable toRegisterError(Exception e) {
+        Throwable err = new AuthException(e.getCause());
+        if (e instanceof FirebaseAuthWeakPasswordException) {
+            err = new AuthWeakPasswordException(e.getCause());
+        } else if (e instanceof
+                FirebaseAuthInvalidCredentialsException) {
+            err = new AuthInvalidEmailException(e.getCause());
+        } else if (e instanceof FirebaseAuthUserCollisionException) {
+            err = new AuthEmailTakenException(e.getCause());
+        }
+        return err;
+    }
+
+    private Throwable toPasswordError(Exception e) {
+        Throwable err = new AuthException(e.getCause());
+        if (e instanceof FirebaseAuthInvalidUserException) {
+            err = new AuthInvalidEmailException(e.getCause());
+        }
+        return err;
+    }
+
 }

@@ -44,19 +44,7 @@ class FirebaseDatabaseService implements IDatabaseService {
                 public void onComplete(com.google.firebase.database.DatabaseError databaseError,
                                        DatabaseReference databaseReference) {
                     if (databaseError != null) {
-                        switch (databaseError.getCode()) {
-                            case com.google.firebase.database.DatabaseError.DISCONNECTED:
-                            case com.google.firebase.database.DatabaseError.MAX_RETRIES:
-                            case com.google.firebase.database.DatabaseError.NETWORK_ERROR:
-                                listener.onFailure(DatabaseError.NETWORK_ERROR);
-                                break;
-                            case com.google.firebase.database.DatabaseError.PERMISSION_DENIED:
-                                listener.onFailure(DatabaseError.ACCESS_DENIED);
-                                break;
-                            default:
-                                listener.onFailure(DatabaseError.INTERNAL_FAIL);
-                                break;
-                        }
+                        listener.onFailure(toDatabaseError(databaseError));
                     } else {
                         listener.onSuccess(null);
                     }
@@ -87,23 +75,12 @@ class FirebaseDatabaseService implements IDatabaseService {
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                //unused - ok
             }
 
             @Override
             public void onCancelled(com.google.firebase.database.DatabaseError databaseError) {
-                switch (databaseError.getCode()) {
-                    case com.google.firebase.database.DatabaseError.DISCONNECTED:
-                    case com.google.firebase.database.DatabaseError.MAX_RETRIES:
-                    case com.google.firebase.database.DatabaseError.NETWORK_ERROR:
-                        listener.onCanceled(DatabaseError.NETWORK_ERROR);
-                        break;
-                    case com.google.firebase.database.DatabaseError.PERMISSION_DENIED:
-                        listener.onCanceled(DatabaseError.ACCESS_DENIED);
-                        break;
-                    default:
-                        listener.onCanceled(DatabaseError.INTERNAL_FAIL);
-                        break;
-                }
+                listener.onCanceled(toDatabaseError(databaseError));
             }
         };
         mChildListeners.put(listener,
@@ -128,19 +105,7 @@ class FirebaseDatabaseService implements IDatabaseService {
 
             @Override
             public void onCancelled(com.google.firebase.database.DatabaseError databaseError) {
-                switch (databaseError.getCode()) {
-                    case com.google.firebase.database.DatabaseError.DISCONNECTED:
-                    case com.google.firebase.database.DatabaseError.MAX_RETRIES:
-                    case com.google.firebase.database.DatabaseError.NETWORK_ERROR:
-                        listener.onCanceled(DatabaseError.NETWORK_ERROR);
-                        break;
-                    case com.google.firebase.database.DatabaseError.PERMISSION_DENIED:
-                        listener.onCanceled(DatabaseError.ACCESS_DENIED);
-                        break;
-                    default:
-                        listener.onCanceled(DatabaseError.INTERNAL_FAIL);
-                        break;
-                }
+                listener.onCanceled(toDatabaseError(databaseError));
             }
         };
         FirebaseValueHandler handler =
@@ -174,4 +139,18 @@ class FirebaseDatabaseService implements IDatabaseService {
     public void goOffline() {
         mDatabase.goOffline();
     }
+
+    private DatabaseError toDatabaseError(com.google.firebase.database.DatabaseError dbError){
+        switch (dbError.getCode()) {
+            case com.google.firebase.database.DatabaseError.DISCONNECTED:
+            case com.google.firebase.database.DatabaseError.MAX_RETRIES:
+            case com.google.firebase.database.DatabaseError.NETWORK_ERROR:
+                return DatabaseError.NETWORK_ERROR;
+            case com.google.firebase.database.DatabaseError.PERMISSION_DENIED:
+                return DatabaseError.ACCESS_DENIED;
+            default:
+                return DatabaseError.INTERNAL_FAIL;
+        }
+    }
+
 }

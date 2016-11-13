@@ -40,4 +40,10 @@ public class Bus {
             mTopics.get(topic).add(ISubscriber);
         }
     }
+
+    public void unSubscribe(ISubscriber ISubscriber, String topic) {
+        if (mTopics.containsKey(topic)) {
+            mTopics.get(topic).remove(ISubscriber);
+        }
+    }
 }

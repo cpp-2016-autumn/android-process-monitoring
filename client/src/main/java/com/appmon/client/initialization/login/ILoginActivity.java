@@ -15,5 +15,5 @@ public interface ILoginActivity {
 
     void setError(Error error);
 
-    void loginSuccessful();
+    void loginSuccessful(String userName);
 }

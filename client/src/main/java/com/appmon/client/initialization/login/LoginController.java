@@ -2,12 +2,19 @@ package com.appmon.client.initialization.login;
 
 import android.text.TextUtils;
 
+import com.appmon.shared.firebase.FirebaseCloudServices;
+import com.appmon.shared.IAuthService;
+import com.appmon.shared.IUser;
+import com.appmon.shared.ResultListener;
+import com.appmon.shared.utils.Validator;
+
 /**
  * Controls LoginActivity
  * Created by MikeSotnichek on 11/7/2016.
  */
 public class LoginController implements ILoginController {
     private static LoginController Instance = new LoginController();
+    private IAuthService authService;
 
     public static LoginController getInstance() {
         return Instance;
@@ -16,7 +23,7 @@ public class LoginController implements ILoginController {
     private ILoginActivity mLoginActivity;
 
     private LoginController() {
-        //TODO: Probably Firebase init
+        authService = FirebaseCloudServices.getInstance().getAuth();
     }
 
     @Override
@@ -30,7 +37,7 @@ public class LoginController implements ILoginController {
         mLoginActivity.setError(ILoginActivity.Error.NO_ERROR);
         ILoginActivity.Error error = null;
 
-        // Check for a valid email address.
+        // Check for a valid email address/password.
         if (TextUtils.isEmpty(email)) {
             error = ILoginActivity.Error.EMAIL_EMPTY;
         } else if (!isEmailValid(email)) {
@@ -42,19 +49,32 @@ public class LoginController implements ILoginController {
         if (error != null) {
             mLoginActivity.setError(error);
         } else {
-            //TODO: Actual login
+            authService.signInWithEmail(email, password, new ResultListener<IUser, IAuthService.SignInError>() {
+                @Override
+                public void onSuccess(IUser user){
+                    mLoginActivity.loginSuccessful(user.getUserID());
+                }
+                @Override
+                public void onFailure(IAuthService.SignInError err){
+                    switch (err){
+                        case WRONG_PASSWORD:
+                            mLoginActivity.setError(ILoginActivity.Error.PASSWORD_INVALID);
+                            break;
+                        case INVALID_EMAIL:
+                            mLoginActivity.setError(ILoginActivity.Error.EMAIL_INVALID);
+                            break;
+                    }
+                }
+            });
         }
-        mLoginActivity.loginSuccessful();
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Use a shared validator
-        return email.contains("@");
+        return Validator.validateEmail(email);
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Use a shared validator
-        return password.length() > 4;
+        return Validator.validatePassword(password);
     }
 
 }

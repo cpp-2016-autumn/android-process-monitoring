@@ -2,15 +2,14 @@ package com.appmon.control;
 
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.input.InputManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,15 +26,17 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     EditText mAppPinField;
     EditText mRepeatAppPinField;
     EditText mClientPinField;
-    View mContentLayout;
+    View mSettingsForm;
+    ProgressBar mProgressBar;
 
     InputMethodManager mInputManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        mContentLayout = findViewById(R.id.contentLayout);
-        mContentLayout.requestFocus();
+        mProgressBar = (ProgressBar) findViewById(R.id.settingsProgress);
+        mSettingsForm = findViewById(R.id.settingsForm);
+        mSettingsForm.requestFocus();
         mInputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         // bind presenter
         mPresenter = ModelPresenterManager.getInstance().getSettingsPresenter();
@@ -181,6 +182,17 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
         if (view != null) {
             mInputManager.hideSoftInputFromWindow(view.getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    @Override
+    public void setProgress(boolean value) {
+        if (value) {
+            mSettingsForm.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mSettingsForm.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 }

@@ -19,4 +19,5 @@ public interface ISettingsView extends IBaseView {
     void clearInputErrors();
     void startWelcomeActivity();
     void clearFocus();
+    void setProgress(boolean value);
 }

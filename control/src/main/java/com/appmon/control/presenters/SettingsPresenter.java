@@ -22,12 +22,14 @@ public class SettingsPresenter implements ISettingsPresenter {
         mChangePasswordListener = new IUserModel.IChangePasswordListener() {
             @Override
             public void onSuccess() {
+                mView.setProgress(false);
                 mView.clearFocus();
                 mView.showMessage(ISettingsView.Message.PASSWORD_CHANGED);
             }
 
             @Override
             public void onFail(IUserModel.ChangePasswordError error) {
+                mView.setProgress(false);
                 switch (error) {
                     case WEAK_PASSWORD:
                         mView.showInputError(ISettingsView.InputError.WEAK_PASSWORD);
@@ -39,12 +41,14 @@ public class SettingsPresenter implements ISettingsPresenter {
         mChangeAppPinListener = new IUserModel.IChangeAppPinListener() {
             @Override
             public void onSuccess() {
+                mView.setProgress(false);
                 mView.clearFocus();
                 mView.showMessage(ISettingsView.Message.APP_PIN_CHANGED);
             }
 
             @Override
             public void onFail(IUserModel.ChangeAppPinError error) {
+                mView.setProgress(false);
                 switch (error) {
                     case WEAK_PIN:
                         mView.showInputError(ISettingsView.InputError.WEAK_APP_PIN);
@@ -56,12 +60,14 @@ public class SettingsPresenter implements ISettingsPresenter {
         mChangeClientPinListener = new IUserModel.IChangeClientPinListener() {
             @Override
             public void onSuccess() {
+                mView.setProgress(false);
                 mView.clearFocus();
                 mView.showMessage(ISettingsView.Message.CLIENT_PIN_CHANGED);
             }
 
             @Override
             public void onFail(IUserModel.ChangeClientPinError error) {
+                mView.setProgress(false);
                 switch (error) {
                     case WEAK_PIN:
                         mView.showInputError(ISettingsView.InputError.WEAK_CLIENT_PIN);
@@ -74,6 +80,7 @@ public class SettingsPresenter implements ISettingsPresenter {
     @Override
     public void changePassword(String password, String passwordRepeat) {
         if (mView != null) {
+            mView.setProgress(true);
             mView.clearInputErrors();
             // validation of password equality
             if (!password.equals(passwordRepeat)) {
@@ -95,6 +102,7 @@ public class SettingsPresenter implements ISettingsPresenter {
     @Override
     public void changeAppPin(String pin, String pinRepeat) {
         if (mView != null) {
+            mView.setProgress(true);
             mView.clearInputErrors();
             // validation of pin equality
             if (!pin.equals(pinRepeat)) {
@@ -109,6 +117,7 @@ public class SettingsPresenter implements ISettingsPresenter {
     public void changeClientPin(String pin) {
         mModel.changeClientPin(pin);
         if (mView == null) return;
+        mView.setProgress(true);
         mView.clearInputErrors();
     }
 

@@ -14,6 +14,7 @@ import com.appmon.control.presenters.LoginPresenter;
 import com.appmon.control.presenters.RegisterPresenter;
 import com.appmon.control.presenters.SettingsPresenter;
 import com.appmon.control.presenters.WelcomePresenter;
+import com.appmon.shared.firebase.FirebaseCloudServices;
 
 
 /**
@@ -47,7 +48,7 @@ public class ModelPresenterManager {
         if (ControlApp.getContext() != null) {
             pref = ControlApp.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
         }
-        mUserModel = new UserModel(pref);
+        mUserModel = new UserModel(FirebaseCloudServices.getInstance(), pref);
     }
 
     private IUserModel getUserModel() {

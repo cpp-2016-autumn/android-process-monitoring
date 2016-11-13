@@ -1,4 +1,4 @@
-package com.appmon.control.utils;
+package com.appmon.shared.utils;
 
 import java.util.regex.Pattern;
 

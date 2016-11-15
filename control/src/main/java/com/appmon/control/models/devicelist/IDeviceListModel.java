@@ -6,7 +6,7 @@ import com.appmon.shared.entities.DeviceInfo;
 
 public interface IDeviceListModel extends IBaseModel {
     interface PresenterOps {
-        void onDeviceAded(String deviceID, DeviceInfo device);
+        void onDeviceAdded(String deviceID, DeviceInfo device);
         void onDeviceChanged(String deviceID, DeviceInfo device);
         void onDeviceRemoved(String deviceID);
         void onDeviceListSyncFailed(DatabaseError error);

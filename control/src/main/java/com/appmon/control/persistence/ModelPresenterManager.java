@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.appmon.control.ControlApp;
+import com.appmon.control.models.devicelist.DeviceListModel;
+import com.appmon.control.models.devicelist.IDeviceListModel;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.UserModel;
+import com.appmon.control.presenters.DeviceListPresenter;
+import com.appmon.control.presenters.IDeviceListPresenter;
 import com.appmon.control.presenters.ILoginPresenter;
 import com.appmon.control.presenters.IRegisterPresenter;
 import com.appmon.control.presenters.ISettingsPresenter;
@@ -35,13 +39,15 @@ public class ModelPresenterManager {
         return ourInstance;
     }
     // === Persistent objects ===
-    // Model
+    // Models
     private IUserModel mUserModel = null;
+    private IDeviceListModel mDeviceListModel = null;
     // Presenters
     private IWelcomePresenter mWelcomePresenter = null;
     private ILoginPresenter mLoginPresenter = null;
     private IRegisterPresenter mRegisterPresenter = null;
     private ISettingsPresenter mSettingsPresenter = null;
+    private IDeviceListPresenter mDeviceListPresenter = null;
 
     private ModelPresenterManager() {
         SharedPreferences pref = null;
@@ -81,5 +87,19 @@ public class ModelPresenterManager {
             mSettingsPresenter = new SettingsPresenter(getUserModel());
         }
         return  mSettingsPresenter;
+    }
+
+    public synchronized IDeviceListModel getDeviceListModel() {
+        if (mDeviceListModel == null) {
+            mDeviceListModel = new DeviceListModel(FirebaseCloudServices.getInstance());
+        }
+        return mDeviceListModel;
+    }
+
+    public synchronized IDeviceListPresenter getDeviceListPresenter() {
+        if (mDeviceListPresenter == null) {
+            mDeviceListPresenter = new DeviceListPresenter(getDeviceListModel());
+        }
+        return mDeviceListPresenter;
     }
 }

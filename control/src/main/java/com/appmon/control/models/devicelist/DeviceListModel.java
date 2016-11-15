@@ -14,7 +14,7 @@ import java.util.Map;
 public class DeviceListModel implements IDeviceListModel {
 
     private final IDatabaseService mDatabase;
-    private final String mDeviceListPath;
+    private final String mRootPath;
 
     private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
 
@@ -25,40 +25,53 @@ public class DeviceListModel implements IDeviceListModel {
         if (user == null) {
             throw new IllegalStateException("Device list must be created after user sign in check");
         }
-        mDeviceListPath = user.getUserID() + "/devices";
+        mRootPath = user.getUserID() + "/devices";
     }
 
     @Override
     public void addPresenter(final PresenterOps presenter) {
-        DatabaseChildListener listener =
-                mDatabase.addChildListener(mDeviceListPath, new DatabaseChildListener() {
+        DatabaseChildListener listener = new DatabaseChildListener() {
             @Override
             public void onChildRemoved(IDataSnapshot prevSnapshot) {
-                presenter.onDeviceRemoved(prevSnapshot.getKey());
+                // Database event are queued, so we must check if
+                // presenter still connected
+                if (mListenerBridges.containsKey(presenter)) {
+                    presenter.onDeviceRemoved(prevSnapshot.getKey());
+                }
             }
 
             @Override
             public void onChildChanged(IDataSnapshot snapshot) {
-                presenter.onDeviceChanged(snapshot.getKey(), snapshot.getValue(DeviceInfo.class));
+                if (mListenerBridges.containsKey(presenter)) {
+                    presenter.onDeviceChanged(snapshot.getKey(),
+                            snapshot.getValue(DeviceInfo.class));
+                }
             }
 
             @Override
             public void onChildAdded(IDataSnapshot snapshot) {
-                presenter.onDeviceAded(snapshot.getKey(), snapshot.getValue(DeviceInfo.class));
+                if (mListenerBridges.containsKey(presenter)) {
+                    presenter.onDeviceAdded(snapshot.getKey(),
+                            snapshot.getValue(DeviceInfo.class));
+                }
             }
 
             @Override
             public void onCanceled(DatabaseError error) {
-                presenter.onDeviceListSyncFailed(error);
+                if (mListenerBridges.containsKey(presenter)) {
+                    presenter.onDeviceListSyncFailed(error);
+                }
             }
-        });
+        };
+        // link listener
+        mDatabase.addChildListener(mRootPath, listener);
         mListenerBridges.put(presenter, listener);
 
     }
 
     @Override
     public void removePresenter(PresenterOps presenter) {
-        DatabaseChildListener listener =  mListenerBridges.get(presenter);
+        DatabaseChildListener listener =  mListenerBridges.remove(presenter);
         if (listener != null) {
             mDatabase.removeChildListener(listener);
         }

@@ -6,9 +6,8 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-public class AppListActivity extends AppCompatActivity {
+public class AppListActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,4 @@ public class AppListActivity extends AppCompatActivity {
         });
         return true;
     }
-
-
 }

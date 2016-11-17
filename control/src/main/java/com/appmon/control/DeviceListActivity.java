@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.presenters.DeviceListPresenter;
 import com.appmon.control.presenters.IDeviceListPresenter;
 import com.appmon.control.views.IDeviceListView;
 import com.appmon.shared.entities.DeviceInfo;
@@ -41,7 +42,8 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
         mListView = (ListView) findViewById(R.id.deviceList);
-        mPresenter = ModelPresenterManager.getInstance().getDeviceListPresenter();
+        mPresenter = new DeviceListPresenter(ModelPresenterManager.getInstance()
+                .getDeviceListModel());
         mPresenter.attachView(this);
         mDeviceList = new ArrayList<>();
         mListAdapter = new DeviceListAdapter();
@@ -87,7 +89,9 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
 
     @Override
     public void openAppList(String deviceId) {
-        Toast.makeText(this, "Device " + deviceId, Toast.LENGTH_SHORT).show();
+        Intent appListActivity = new Intent(this, AppListActivity.class);
+        appListActivity.putExtra("DeviceId", deviceId);
+        startActivity(appListActivity);
     }
 
     @Override

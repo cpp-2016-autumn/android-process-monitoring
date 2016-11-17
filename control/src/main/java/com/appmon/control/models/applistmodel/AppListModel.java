@@ -29,18 +29,12 @@ public class AppListModel implements IAppListModel {
     }
 
     @Override
-    public void setAppBlock(final PresenterOps presenter, String appId, boolean state) {
-        // ignore result callback, if node will be changed, it will be passed to presenter
-        // using listener
-        mDatabase.setValue(mRootPath + presenter.getDeviceId() + "/" + appId + "/blocked",
-                state, null);
-    }
-
-    @Override
     public void addPresenter(final PresenterOps presenter) {
         DatabaseChildListener listener = new DatabaseChildListener() {
             @Override
             public void onCanceled(DatabaseError error) {
+                // Database event are queued, so we must check if
+                // presenter still connected
                 if (mListenerBridges.containsKey(presenter)) {
                     presenter.onAppListSyncFailed(error);
                 }
@@ -79,5 +73,13 @@ public class AppListModel implements IAppListModel {
         if (listener != null) {
             mDatabase.removeChildListener(listener);
         }
+    }
+
+    @Override
+    public void setAppBlock(final PresenterOps presenter, String appId, boolean state) {
+        // ignore result callback, if node will be changed, it will be passed to presenter
+        // using listener
+        mDatabase.setValue(mRootPath + presenter.getDeviceId() + "/" + appId + "/blocked",
+                state, null);
     }
 }

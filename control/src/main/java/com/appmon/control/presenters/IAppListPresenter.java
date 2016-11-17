@@ -6,5 +6,6 @@ import com.appmon.control.views.IAppListView;
 public interface IAppListPresenter extends IBasePresenter<IAppListView>,
         IAppListModel.PresenterOps {
     void requestAppList();
-    void selectApp(int index);
+    void setAppBlockMode(int index, boolean blocked);
+    void setFilter(String filter);
 }

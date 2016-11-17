@@ -21,11 +21,14 @@ public class AppListPresenter implements IAppListPresenter {
     private Map<String, PackageInfo> mApps;
     private SparseArray<String> mIndexedApps;
 
-    AppListPresenter(IAppListModel model, String deviceId) {
+    private String mFilter;
+
+    public AppListPresenter(IAppListModel model, String deviceId) {
         mModel = model;
         mDeviceId = deviceId;
         mApps = new HashMap<>();
         mIndexedApps = new SparseArray<>();
+        mFilter = "";
     }
 
     private void updateView() {
@@ -33,8 +36,11 @@ public class AppListPresenter implements IAppListPresenter {
         List<PackageInfo> viewList = new ArrayList<>();
         int i = 0;
         for (Map.Entry<String, PackageInfo> entry : mApps.entrySet()) {
-            viewList.add(entry.getValue());
-            mIndexedApps.put(i++, entry.getKey());
+            String appName = entry.getValue().getName().toLowerCase();
+            if (appName.contains(mFilter)) {
+                viewList.add(entry.getValue());
+                mIndexedApps.put(i++, entry.getKey());
+            }
         }
         mView.updateList(viewList);
     }
@@ -45,11 +51,19 @@ public class AppListPresenter implements IAppListPresenter {
     }
 
     @Override
-    public void selectApp(int index) {
+    public void setFilter(String filter) {
+        mFilter = filter;
+        updateView();
+    }
+
+    @Override
+    public void setAppBlockMode(int index, boolean blocked) {
         String id = mIndexedApps.get(index);
-        if (id != null) {
-            // change state to opposite
-            mModel.setAppBlock(this, id, !mApps.get(id).isBlocked());
+        if (mApps.get(id).isBlocked() != blocked) {
+            if (id != null) {
+                // change state to opposite
+                mModel.setAppBlock(this, id, blocked);
+            }
         }
     }
 

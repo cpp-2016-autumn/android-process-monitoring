@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.appmon.control.persistence.ModelPresenterManager;
 import com.appmon.control.presenters.IWelcomePresenter;
+import com.appmon.control.presenters.WelcomePresenter;
 import com.appmon.control.views.IWelcomeView;
 
 public class WelcomeActivity extends AppCompatActivity implements IWelcomeView {
@@ -18,8 +19,7 @@ public class WelcomeActivity extends AppCompatActivity implements IWelcomeView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         // get presenter and attach this view to it
-        mPresenter = ModelPresenterManager.getInstance()
-                .getWelcomePresenter();
+        mPresenter = new WelcomePresenter(ModelPresenterManager.getInstance().getUserModel());
         mPresenter.attachView(this);
         // set listeners
         Button loginButton = (Button) findViewById(R.id.welcomeLoginBtn);

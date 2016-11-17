@@ -11,40 +11,77 @@
     android:orientation="vertical"
     tools:context="com.appmon.control.WelcomeActivity">
 
-    <!--Application icon-->
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"/>
-    <!--Welcome messages-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_welcome"
-        android:textAppearance="@android:style/TextAppearance.Large" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_welcome_action"
-        android:textAppearance="@android:style/TextAppearance.Small"/>
-    <!--Buttons container-->
     <LinearLayout
+        android:id="@+id/newUserForm"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/base_form_margin">
-        <!--Login-->
-        <Button
-            android:id="@+id/welcomeLoginBtn"
+        android:gravity="center"
+        android:visibility="visible">
+        <!--Application icon-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+        <!--Welcome messages-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_welcome"
+            android:textAppearance="@android:style/TextAppearance.Large" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_welcome_action"
+            android:textAppearance="@android:style/TextAppearance.Small"/>
+        <!--Buttons container-->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding_between_buttons"
-            android:text="@string/text_login"/>
-        <!--Register-->
-        <Button
-            android:id="@+id/welcomeRegisterBtn"
+            android:orientation="vertical"
+            android:padding="@dimen/base_form_margin">
+            <!--Login-->
+            <Button
+                android:id="@+id/welcomeLoginBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_between_buttons"
+                android:text="@string/text_login"/>
+            <!--Register-->
+            <Button
+                android:id="@+id/welcomeRegisterBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_register"/>
+
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/existingUserForm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_pin"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <EditText
+            android:id="@+id/pinField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_register"/>
+            android:layout_marginLeft="@dimen/margin_pin_form"
+            android:layout_marginRight="@dimen/margin_pin_form"
+            android:gravity="center"
+            android:hint="@string/pin"/>
+        <Button
+            android:id="@+id/welcomeLogOutBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_pin_form"
+            android:layout_marginRight="@dimen/margin_pin_form"
+            android:text="Logout"/>
     </LinearLayout>
 </LinearLayout>

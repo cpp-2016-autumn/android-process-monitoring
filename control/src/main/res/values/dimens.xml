@@ -9,4 +9,5 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="padding_settings_group">16dp</dimen>
+    <dimen name="margin_pin_form">75dp</dimen>
 </resources>

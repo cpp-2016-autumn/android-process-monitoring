@@ -2,6 +2,7 @@ package com.appmon.control.models.devicelist;
 
 import com.appmon.shared.DatabaseChildListener;
 import com.appmon.shared.DatabaseError;
+import com.appmon.shared.IAuthService;
 import com.appmon.shared.ICloudServices;
 import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.IDatabaseService;
@@ -14,22 +15,41 @@ import java.util.Map;
 public class DeviceListModel implements IDeviceListModel {
 
     private final IDatabaseService mDatabase;
-    private final String mRootPath;
 
     private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
+
+    private String lastUserId = null;
+
+    private IAuthService mAuth;
 
     public DeviceListModel(ICloudServices cloudServices) {
         mListenerBridges = new HashMap<>();
         mDatabase = cloudServices.getDatabase();
-        IUser user = cloudServices.getAuth().getUser();
-        if (user == null) {
-            throw new IllegalStateException("Device list must be created after user sign in check");
+        mAuth = cloudServices.getAuth();
+    }
+
+    private void clearListeners() {
+        for (DatabaseChildListener l : mListenerBridges.values()) {
+            mDatabase.removeChildListener(l);
         }
-        mRootPath = user.getUserID() + "/devices";
+    }
+
+    private String getRootPath() {
+        if (mAuth.getUser() == null)
+            return null;
+        String userId = mAuth.getUser().getUserID();
+        if (!userId.equals(lastUserId)) {
+            clearListeners();
+            lastUserId = userId;
+        }
+        return userId + "/devices";
     }
 
     @Override
     public void addPresenter(final PresenterOps presenter) {
+        if (getRootPath() == null) {
+            return;
+        }
         DatabaseChildListener listener = new DatabaseChildListener() {
             @Override
             public void onChildRemoved(IDataSnapshot prevSnapshot) {
@@ -64,7 +84,7 @@ public class DeviceListModel implements IDeviceListModel {
             }
         };
         // link listener
-        mDatabase.addChildListener(mRootPath, listener);
+        mDatabase.addChildListener(getRootPath(), listener);
         mListenerBridges.put(presenter, listener);
 
     }

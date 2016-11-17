@@ -13,13 +13,11 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.persistence.ModelManager;
 import com.appmon.control.presenters.AppListPresenter;
 import com.appmon.control.presenters.IAppListPresenter;
 import com.appmon.control.views.IAppListView;
@@ -41,7 +39,7 @@ public class AppListActivity extends AppCompatActivity implements IAppListView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_list);
         mListView = (ListView) findViewById(R.id.appList);
-        mPresenter = new AppListPresenter(ModelPresenterManager.getInstance().getAppListModel(),
+        mPresenter = new AppListPresenter(ModelManager.getInstance().getAppListModel(),
                 getIntent().getExtras().getString("DeviceId"));
         mPresenter.attachView(this);
         mAppList = new ArrayList<>();

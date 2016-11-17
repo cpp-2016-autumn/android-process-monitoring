@@ -204,16 +204,26 @@ public class UserModel implements IUserModel {
     @Override
     public void changeAppPin(String pin) {
         // validation
-        if (!Validator.validatePin(pin)) {
+        if (!Validator.validatePin(pin) && (!(pin.length() == 0))) {
             for (IChangeAppPinListener l : mChangeAppPinListeners) {
                 l.onFail(ChangeAppPinError.WEAK_PIN);
             }
             return;
         }
-        mPreferences.edit().putString(PREFERENCES_APP_PIN_KEY, pin).apply();
+        if (pin.length() == 0) {
+            mPreferences.edit().remove(PREFERENCES_APP_PIN_KEY).apply();
+        } else {
+            mPreferences.edit().putString(PREFERENCES_APP_PIN_KEY, pin).apply();
+        }
         for (IChangeAppPinListener l : mChangeAppPinListeners) {
             l.onSuccess();
         }
+    }
+
+    @Nullable
+    @Override
+    public String getAppPin() {
+        return mPreferences.getString(PREFERENCES_APP_PIN_KEY, null);
     }
 
     @Override

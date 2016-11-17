@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.persistence.ModelManager;
 import com.appmon.control.presenters.IRegisterPresenter;
 import com.appmon.control.presenters.RegisterPresenter;
 import com.appmon.control.views.IRegisterView;
@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         // attach presenter
-        mPresenter = new RegisterPresenter(ModelPresenterManager.getInstance().getUserModel());
+        mPresenter = new RegisterPresenter(ModelManager.getInstance().getUserModel());
         mPresenter.attachView(this);
         // Gui elements Binding
         mProgressBar = (ProgressBar) findViewById(R.id.registerProgress);

@@ -2,6 +2,7 @@ package com.appmon.control.models.applistmodel;
 
 import com.appmon.shared.DatabaseChildListener;
 import com.appmon.shared.DatabaseError;
+import com.appmon.shared.IAuthService;
 import com.appmon.shared.ICloudServices;
 import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.IDatabaseService;
@@ -13,23 +14,43 @@ import java.util.Map;
 
 public class AppListModel implements IAppListModel {
 
-    final IDatabaseService mDatabase;
-    final String mRootPath;
+    private IDatabaseService mDatabase;
 
-    Map<PresenterOps, DatabaseChildListener> mListenerBridges;
+    private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
+
+    private String lastUserId = null;
+
+    private IAuthService mAuth;
 
     public AppListModel(ICloudServices cloudServices) {
         mDatabase = cloudServices.getDatabase();
         mListenerBridges = new HashMap<>();
-        IUser user = cloudServices.getAuth().getUser();
-        if (user == null) {
-            throw new IllegalStateException("AppList must be created after user sign in check");
-        }
-        mRootPath = user.getUserID() + "/apps/";
+        mAuth = cloudServices.getAuth();
     }
+
+
+    private void clearListeners() {
+        for (DatabaseChildListener l : mListenerBridges.values()) {
+            mDatabase.removeChildListener(l);
+        }
+    }
+
+    private String getRootPath() {
+        if (mAuth.getUser() == null)
+            return null;
+        String userId = mAuth.getUser().getUserID();
+        if (!userId.equals(lastUserId)) {
+            clearListeners();
+            lastUserId = userId;
+        }
+        return userId + "/apps/";
+    }
+
 
     @Override
     public void addPresenter(final PresenterOps presenter) {
+        if (getRootPath() == null)
+            return;
         DatabaseChildListener listener = new DatabaseChildListener() {
             @Override
             public void onCanceled(DatabaseError error) {
@@ -63,7 +84,7 @@ public class AppListModel implements IAppListModel {
                 }
             }
         };
-        mDatabase.addChildListener(mRootPath + presenter.getDeviceId(), listener);
+        mDatabase.addChildListener(getRootPath() + presenter.getDeviceId(), listener);
         mListenerBridges.put(presenter, listener);
     }
 
@@ -77,9 +98,11 @@ public class AppListModel implements IAppListModel {
 
     @Override
     public void setAppBlock(final PresenterOps presenter, String appId, boolean state) {
+        if (getRootPath() == null)
+            return;
         // ignore result callback, if node will be changed, it will be passed to presenter
         // using listener
-        mDatabase.setValue(mRootPath + presenter.getDeviceId() + "/" + appId + "/blocked",
+        mDatabase.setValue(getRootPath() + presenter.getDeviceId() + "/" + appId + "/blocked",
                 state, null);
     }
 }

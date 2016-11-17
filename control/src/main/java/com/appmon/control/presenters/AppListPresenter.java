@@ -15,8 +15,8 @@ import java.util.Map;
 public class AppListPresenter implements IAppListPresenter {
 
     private IAppListView mView = null;
-    private final IAppListModel mModel;
-    private final String mDeviceId;
+    private IAppListModel mModel;
+    private String mDeviceId;
 
     private Map<String, PackageInfo> mApps;
     private SparseArray<String> mIndexedApps;

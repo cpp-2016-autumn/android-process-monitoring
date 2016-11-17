@@ -43,6 +43,7 @@ public interface IUserModel extends IBaseModel {
 
     //! Returns current user ID if signed in, or null in other cases
     @Nullable String getUserID();
+    @Nullable String getAppPin();
 
     // listeners setters
 

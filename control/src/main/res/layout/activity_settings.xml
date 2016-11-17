@@ -113,7 +113,7 @@
                         android:id="@+id/appPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/prompt_pin"
+                        android:hint="@string/prompt_app_pin"
                         android:inputType="numberPassword"
                         android:maxLines="1"
                         android:nextFocusForward="@+id/appPinRepeat"/>
@@ -163,7 +163,7 @@
                         android:id="@+id/clientPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/prompt_pin"
+                        android:hint="@string/prompt_client_pin"
                         android:inputType="numberPassword"
                         android:maxLines="1"
                         android:imeOptions="actionDone"

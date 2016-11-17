@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.persistence.ModelManager;
 import com.appmon.control.presenters.ISettingsPresenter;
 import com.appmon.control.presenters.SettingsPresenter;
 import com.appmon.control.views.ISettingsView;
@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
         mSettingsForm.requestFocus();
         mInputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         // bind presenter
-        mPresenter = new SettingsPresenter(ModelPresenterManager.getInstance().getUserModel());
+        mPresenter = new SettingsPresenter(ModelManager.getInstance().getUserModel());
         mPresenter.attachView(this);
         // bind gui elements
         mPasswordField = (EditText) findViewById(R.id.password);

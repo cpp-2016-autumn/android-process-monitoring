@@ -3,7 +3,6 @@ package com.appmon.control;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,17 +16,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.persistence.ModelManager;
 import com.appmon.control.presenters.DeviceListPresenter;
 import com.appmon.control.presenters.IDeviceListPresenter;
 import com.appmon.control.views.IDeviceListView;
 import com.appmon.shared.entities.DeviceInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class DeviceListActivity extends AppCompatActivity implements IDeviceListView {
 
@@ -42,7 +38,7 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
         mListView = (ListView) findViewById(R.id.deviceList);
-        mPresenter = new DeviceListPresenter(ModelPresenterManager.getInstance()
+        mPresenter = new DeviceListPresenter(ModelManager.getInstance()
                 .getDeviceListModel());
         mPresenter.attachView(this);
         mDeviceList = new ArrayList<>();

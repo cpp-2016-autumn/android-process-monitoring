@@ -26,7 +26,8 @@
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="prompt_pin">New pin</string>
+    <string name="prompt_app_pin">New pin (can be empty)</string>
+    <string name="prompt_client_pin">New pin</string>
     <string name="prompt_pin_repeat">Repeat pin</string>
     <string name="prompt_password_repeat">Repeat password</string>
     <string name="prompt_password_new">New password</string>
@@ -49,4 +50,6 @@
     <string name="text_no_applications">No applications</string>
     <string name="text_device_list_sync_error">Device list sync error</string>
     <string name="text_app_list_sync_error">App list sync error</string>
+    <string name="enter_pin">Enter pin:</string>
+    <string name="pin">Pin</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.appmon.control.models.user;
 
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -35,13 +34,13 @@ public class UserModel implements IUserModel {
     private Set<IChangeClientPinListener> mChangeClientPinListener = new HashSet<>();
     private Set<IResetPasswordListener> mResetPasswordListeners = new HashSet<>();
 
-    private final SharedPreferences mPreferences;
+    private final ISharedPreferences mPreferences;
     private final IDatabaseService mDatabase;
     private final IAuthService mAuth;
     private String mUserRootPath;
     private IUser mUser;
 
-    public UserModel(ICloudServices cloudServices, SharedPreferences preferences) {
+    public UserModel(ICloudServices cloudServices, ISharedPreferences preferences) {
         mPreferences = preferences;
         mDatabase = cloudServices.getDatabase();
         mAuth = cloudServices.getAuth();
@@ -211,9 +210,10 @@ public class UserModel implements IUserModel {
             return;
         }
         if (pin.length() == 0) {
-            mPreferences.edit().remove(PREFERENCES_APP_PIN_KEY).apply();
+            mPreferences.remove(PREFERENCES_APP_PIN_KEY);
+
         } else {
-            mPreferences.edit().putString(PREFERENCES_APP_PIN_KEY, pin).apply();
+            mPreferences.setString(PREFERENCES_APP_PIN_KEY, pin);
         }
         for (IChangeAppPinListener l : mChangeAppPinListeners) {
             l.onSuccess();
@@ -223,7 +223,7 @@ public class UserModel implements IUserModel {
     @Nullable
     @Override
     public String getAppPin() {
-        return mPreferences.getString(PREFERENCES_APP_PIN_KEY, null);
+        return mPreferences.getString(PREFERENCES_APP_PIN_KEY);
     }
 
     @Override
@@ -270,7 +270,6 @@ public class UserModel implements IUserModel {
 
             @Override
             public void onFailure(Throwable error) {
-                Log.e(LOG_TAG, "Internal database error:");
                 for (IResetPasswordListener l: mResetPasswordListeners) {
                     l.onFail(ResetPasswordError.INTERNAL_ERROR);
                 }

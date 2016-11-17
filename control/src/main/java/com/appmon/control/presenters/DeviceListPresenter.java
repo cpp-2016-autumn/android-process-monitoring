@@ -20,12 +20,12 @@ public class DeviceListPresenter implements IDeviceListPresenter, IDeviceListMod
     // DeviceId => DeviceInfo
     private Map<String, DeviceInfo> mDevices;
     // Generated View List Item Position => DeviceInfo
-    private SparseArray<String> mIndexedDevices;
+    private Map<Integer, String> mIndexedDevices;
 
     public DeviceListPresenter(IDeviceListModel model) {
         mModel = model;
         mDevices = new HashMap<>();
-        mIndexedDevices = new SparseArray<>();
+        mIndexedDevices = new HashMap<>();
     }
 
 

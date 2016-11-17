@@ -19,7 +19,7 @@ public class AppListPresenter implements IAppListPresenter {
     private String mDeviceId;
 
     private Map<String, PackageInfo> mApps;
-    private SparseArray<String> mIndexedApps;
+    private Map<Integer, String> mIndexedApps;
 
     private String mFilter;
 
@@ -27,7 +27,7 @@ public class AppListPresenter implements IAppListPresenter {
         mModel = model;
         mDeviceId = deviceId;
         mApps = new HashMap<>();
-        mIndexedApps = new SparseArray<>();
+        mIndexedApps = new HashMap<>();
         mFilter = "";
     }
 
@@ -59,8 +59,8 @@ public class AppListPresenter implements IAppListPresenter {
     @Override
     public void setAppBlockMode(int index, boolean blocked) {
         String id = mIndexedApps.get(index);
-        if (mApps.get(id).isBlocked() != blocked) {
-            if (id != null) {
+        if (id != null) {
+            if (mApps.get(id).isBlocked() != blocked) {
                 // change state to opposite
                 mModel.setAppBlock(this, id, blocked);
             }

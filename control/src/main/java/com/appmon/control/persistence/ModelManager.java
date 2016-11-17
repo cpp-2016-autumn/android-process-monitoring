@@ -8,6 +8,8 @@ import com.appmon.control.models.applistmodel.AppListModel;
 import com.appmon.control.models.applistmodel.IAppListModel;
 import com.appmon.control.models.devicelist.DeviceListModel;
 import com.appmon.control.models.devicelist.IDeviceListModel;
+import com.appmon.control.models.user.AndroidSharedPreferences;
+import com.appmon.control.models.user.ISharedPreferences;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.UserModel;
 import com.appmon.shared.firebase.FirebaseCloudServices;
@@ -36,12 +38,11 @@ public class ModelManager {
     private IDeviceListModel mDeviceListModel = null;
     private IAppListModel mAppListModel = null;
 
-    SharedPreferences mAndroidPref;
+    ISharedPreferences mAndroidPref;
 
     private ModelManager() {
         if (ControlApp.getContext() != null) {
-            mAndroidPref =
-                    ControlApp.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+            mAndroidPref = new AndroidSharedPreferences(ControlApp.getContext());
         }
     }
 

@@ -75,6 +75,7 @@
             android:layout_marginLeft="@dimen/margin_pin_form"
             android:layout_marginRight="@dimen/margin_pin_form"
             android:gravity="center"
+            android:inputType="numberPassword"
             android:hint="@string/pin"/>
         <Button
             android:id="@+id/welcomeLogOutBtn"

@@ -55,9 +55,8 @@ public class LoginController implements ILoginController {
             authService.signInWithEmail(email, password, new ResultListener<IUser, Throwable>() {
                 @Override
                 public void onSuccess(IUser user) {
-                    mLoginActivity.loginSuccessful(user.getUserID());
+                    mLoginActivity.loginSuccessful();
                 }
-
                 @Override
                 public void onFailure(Throwable err) {
                     try {

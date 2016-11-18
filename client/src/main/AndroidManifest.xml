@@ -14,16 +14,21 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".subscribers.blocking.BlockingView"
+            android:label="@string/title_activity_blocking_view"
+            android:theme="@style/AppTheme">
         </activity>
 
         <service
             android:name=".initialization.SetupService"
             android:exported="false" />
         <service
-            android:name=".subscribers.BlockerService"
+            android:name=".subscribers.blocking.BlockingService"
             android:enabled="true"
             android:exported="true"
             android:label="@string/acc_service_name"
@@ -34,4 +39,5 @@
         </service>
 
     </application>
+
 </manifest>

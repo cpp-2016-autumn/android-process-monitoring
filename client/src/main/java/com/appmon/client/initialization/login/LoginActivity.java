@@ -96,8 +96,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
 
 
     @Override
-    public void loginSuccessful(String userID) {
-        SetupService.StartInit(getApplicationContext(), userID);
+    public void loginSuccessful() {
+        SetupService.StartInit(getApplicationContext());
         Toast.makeText(LoginActivity.this, R.string.auth_complete, Toast.LENGTH_LONG).show();
         finish();
     }

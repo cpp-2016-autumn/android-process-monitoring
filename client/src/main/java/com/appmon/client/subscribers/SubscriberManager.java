@@ -9,9 +9,8 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.appmon.client.bus.Bus;
-import com.appmon.client.bus.Message;
-import com.appmon.client.bus.Topic;
-import com.appmon.shared.DatabaseChildListener;
+import com.appmon.client.subscribers.blocking.BlockingScreenManager;
+import com.appmon.client.subscribers.blocking.BlockingService;
 import com.appmon.shared.DatabaseError;
 import com.appmon.shared.DatabaseValueListener;
 import com.appmon.shared.IDataSnapshot;
@@ -26,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 /**
  * Created by Mike on 11/16/2016.
@@ -37,13 +35,14 @@ public class SubscriberManager {
 
     private CloudManager mCloudManager = null;
     private PackageUpdateManager mPackageSubscriber = null;
-    private BlockerService mBlockerService = null;
+    private BlockingService mBlockerService = null;
+    private BlockingScreenManager mBlockingScreenManager = null;
     private Bus mBus = null;
 
-    public SubscriberManager(Context context, BlockerService blocker) {
+    public SubscriberManager(Bus bus, Context context, BlockingService blocker) {
         mContext = context;
         mBlockerService = blocker;
-        mBus = new Bus();
+        mBus = bus;
 
         String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -63,10 +62,8 @@ public class SubscriberManager {
                 filter.addAction("android.intent.action.PACKAGE_REMOVED");
                 filter.addDataScheme("package");
                 mContext.registerReceiver(mPackageSubscriber, filter);
-
                 mCloudManager = new CloudManager(mBus, appsInfoPath, pinPath);
-
-                Log.d("MANAGER", "REGISTERED STUFF");
+                mBlockingScreenManager = new BlockingScreenManager(mBus, mContext);
             }
 
             @Override
@@ -151,19 +148,12 @@ public class SubscriberManager {
                 syncListener.onSuccess(null);
             }
         });
-
-        //get device application info
-
-
-    }
-
-    public Bus getBus() {
-        return mBus;
     }
 
     public void cleanUp() {
         mCloudManager.cleanUp();
         mContext.unregisterReceiver(mPackageSubscriber);
         mBlockerService.cleanUp();
+        mBlockingScreenManager.cleanUp();
     }
 }

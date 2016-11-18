@@ -32,14 +32,12 @@ public class CloudManager implements ISubscriber {
             public void onChildAdded(IDataSnapshot snapshot) {
                 PackageInfo info = snapshot.getValue(PackageInfo.class);
                 Message<PackageInfo> message = new Message<>(info, Topic.APP_STATE_UPDATE);
-                Log.d("CLOUD", "Message :" + info.getPackageName());
                 mBus.publish(message);
             }
             @Override
             public void onChildChanged(IDataSnapshot snapshot) {
                 PackageInfo info = snapshot.getValue(PackageInfo.class);
                 Message<PackageInfo> message = new Message<>(info, Topic.APP_STATE_UPDATE);
-                Log.d("CLOUD", "Message :" + info.getPackageName());
                 mBus.publish(message);
             }
         };

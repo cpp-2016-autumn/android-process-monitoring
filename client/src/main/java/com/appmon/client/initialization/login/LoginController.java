@@ -1,7 +1,11 @@
 package com.appmon.client.initialization.login;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.appmon.shared.exceptions.AuthException;
+import com.appmon.shared.exceptions.AuthInvalidEmailException;
+import com.appmon.shared.exceptions.AuthWrongPasswordException;
 import com.appmon.shared.firebase.FirebaseCloudServices;
 import com.appmon.shared.IAuthService;
 import com.appmon.shared.IUser;
@@ -10,7 +14,6 @@ import com.appmon.shared.utils.Validator;
 
 /**
  * Controls LoginActivity
- * Created by MikeSotnichek on 11/7/2016.
  */
 public class LoginController implements ILoginController {
     private static LoginController Instance = new LoginController();
@@ -49,20 +52,22 @@ public class LoginController implements ILoginController {
         if (error != null) {
             mLoginActivity.setError(error);
         } else {
-            authService.signInWithEmail(email, password, new ResultListener<IUser, IAuthService.SignInError>() {
+            authService.signInWithEmail(email, password, new ResultListener<IUser, Throwable>() {
                 @Override
-                public void onSuccess(IUser user){
+                public void onSuccess(IUser user) {
                     mLoginActivity.loginSuccessful(user.getUserID());
                 }
+
                 @Override
-                public void onFailure(IAuthService.SignInError err){
-                    switch (err){
-                        case WRONG_PASSWORD:
-                            mLoginActivity.setError(ILoginActivity.Error.PASSWORD_INVALID);
-                            break;
-                        case INVALID_EMAIL:
-                            mLoginActivity.setError(ILoginActivity.Error.EMAIL_INVALID);
-                            break;
+                public void onFailure(Throwable err) {
+                    try {
+                        throw err;
+                    } catch (AuthWrongPasswordException e) {
+                        mLoginActivity.setError(ILoginActivity.Error.PASSWORD_INVALID);
+                    } catch (AuthInvalidEmailException e) {
+                        mLoginActivity.setError(ILoginActivity.Error.EMAIL_INVALID);
+                    } catch (Throwable e) {
+                        Log.d("Unknown exception", e.getMessage());
                     }
                 }
             });

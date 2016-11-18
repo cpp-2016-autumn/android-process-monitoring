@@ -1,7 +1,6 @@
 package com.appmon.client.initialization;
 
 import android.app.IntentService;
-import android.bluetooth.BluetoothClass;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
@@ -9,9 +8,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.appmon.client.initialization.login.LoginActivity;
+import com.appmon.shared.DatabaseValueListener;
+import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.entities.DeviceInfo;
 import com.appmon.shared.entities.PackageInfo;
 import com.appmon.shared.firebase.FirebaseCloudServices;
@@ -72,46 +74,17 @@ public class SetupService extends IntentService {
     private void handleInit(String UserID) {
         //hide icon
         PackageManager pm = getPackageManager();
-        //ComponentName componentName = new ComponentName(this, LoginActivity.class);
-        //pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);//
+        ComponentName componentName = new ComponentName(this, LoginActivity.class);
+        pm.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
 
 
-        String android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        StringBuilder pathBuilder = new StringBuilder();
-        pathBuilder.append(UserID);
-        pathBuilder.append("/devices/");
-        pathBuilder.append(android_id);
-
-        String deviceInfoPath = pathBuilder.toString();
-        mDatabaseService.setValue(deviceInfoPath, new DeviceInfo(Build.BRAND + " " + Build.MODEL), new ResultListener<Void, DatabaseError>() {
-            @Override
-            public void onFailure(DatabaseError error) {
-                Toast.makeText(getApplicationContext(), "Failed to connect to database: " + error.name(), Toast.LENGTH_LONG);
-            }
-        });
-
-        //get application packages
-        pathBuilder.setLength(0);
-        pathBuilder.append(UserID);
-        pathBuilder.append("/apps/");
-        pathBuilder.append(android_id);
-
-        deviceInfoPath = pathBuilder.toString();
-
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-        Map<String, PackageInfo> data = new HashMap<>();
-        for (ApplicationInfo info : packages) {
-            data.put(Integer.toString(info.packageName.hashCode()), new PackageInfo(pm.getApplicationLabel(info).toString(), info.packageName, false));
-        }
-
-        mDatabaseService.setValue(deviceInfoPath, data, new ResultListener<Void, DatabaseError>() {
-            @Override
-            public void onFailure(DatabaseError error) {
-                Toast.makeText(getApplicationContext(), "Failed to connect to database: " + error.name(), Toast.LENGTH_LONG);
-            }
-        });
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
+
 
     /**
      * Handle termination.
@@ -120,6 +93,9 @@ public class SetupService extends IntentService {
         //show icon
         PackageManager p = getPackageManager();
         ComponentName componentName = new ComponentName(this, LoginActivity.class);
-        p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        p.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+
     }
 }

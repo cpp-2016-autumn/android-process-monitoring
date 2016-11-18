@@ -11,16 +11,12 @@ import java.util.LinkedList;
  */
 
 public class Bus {
-    private HashMap<String, LinkedList<ISubscriber>> mTopics;
-    private static Bus Instance = null;
 
-    private Bus() {
+
+    private HashMap<Topic, LinkedList<ISubscriber>> mTopics;
+
+    public Bus() {
         mTopics = new HashMap<>();
-    }
-
-    public static Bus getInstance() {
-        if (Instance == null) Instance = new Bus();
-        return Instance;
     }
 
     public void publish(Message message) {
@@ -32,7 +28,7 @@ public class Bus {
         }
     }
 
-    public void subscribe(ISubscriber ISubscriber, String topic) {
+    public void subscribe(ISubscriber ISubscriber, Topic topic) {
         if (mTopics.containsKey(topic)) {
             mTopics.get(topic).add(ISubscriber);
         } else {
@@ -41,7 +37,7 @@ public class Bus {
         }
     }
 
-    public void unSubscribe(ISubscriber ISubscriber, String topic) {
+    public void unsubscribe(ISubscriber ISubscriber, Topic topic) {
         if (mTopics.containsKey(topic)) {
             mTopics.get(topic).remove(ISubscriber);
         }

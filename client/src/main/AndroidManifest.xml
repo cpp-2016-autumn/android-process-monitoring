@@ -14,13 +14,24 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".initialization.SetupService"
-            android:exported="false"></service>
-    </application>
+            android:exported="false" />
+        <service
+            android:name=".subscribers.BlockerService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/acc_service_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+        </service>
 
+    </application>
 </manifest>

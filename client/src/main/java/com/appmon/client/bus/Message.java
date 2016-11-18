@@ -8,9 +8,9 @@ package com.appmon.client.bus;
 
 public class Message<T> {
     private T mData;
-    private String mTopic;
+    private Topic mTopic;
 
-    public Message(T data, String topic) {
+    public Message(T data, Topic topic) {
         mData = data;
         mTopic = topic;
     }
@@ -19,7 +19,7 @@ public class Message<T> {
         return mData;
     }
 
-    public String getTopic() {
+    public Topic getTopic() {
         return mTopic;
     }
 }

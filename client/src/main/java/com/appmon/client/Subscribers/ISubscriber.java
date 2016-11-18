@@ -8,5 +8,8 @@ import com.appmon.client.bus.Message;
  */
 
 public interface ISubscriber {
+
     void notify(Message message);
+
+    void cleanUp();
 }

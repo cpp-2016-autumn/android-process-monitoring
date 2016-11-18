@@ -70,7 +70,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override

@@ -31,18 +31,72 @@ public interface IUserModel extends IBaseModel {
 
     // async actions
 
+    /**
+     * Signs in user with given email and password.
+     * Returns results trough {@link ISignInListener}
+     * Add listener with {@link #addSignInListener(ISignInListener)}
+     * @param email
+     * @param password
+     */
     void signInWithEmail(String email, String password);
+
+    /**
+     * Registers user with given email and password.
+     * Returns results trough {@link IRegisterListener}.
+     * Add listener with {@link #addRegisterListener(IRegisterListener)}
+     * @param email
+     * @param password
+     */
     void registerWithEmail(String email, String password);
+
+    /**
+     * Signs user out. Will be executed immediately.
+     */
     void signOut();
+
+    /**
+     * Changes user password.
+     * Returns results trough {@link IChangePasswordListener}
+     * Add listener with {@link #addChangePasswordListener(IChangePasswordListener)}
+     * @param password
+     */
     void changePassword(String password);
+
+    /**
+     * Changes application pin-code.
+     * Returns results trough {@link IChangeAppPinListener}
+     * Add listener with {@link #addChangeAppPinListener(IChangeAppPinListener)}
+     * @param pin
+     */
     void changeAppPin(String pin);
+
+    /**
+     * Changes client pin-code.
+     * Returns results trough {@link IChangeClientPinListener}
+     * Add listener with {@link #addChangeClientPinListener(IChangeClientPinListener)}
+     * @param pin
+     */
     void changeClientPin(String pin);
+
+    /**
+     * Sends email with password reset link.
+     * Triggers {@link IResetPasswordListener} when finished.
+     * Add listener with {@link #addResetPasswordListener(IResetPasswordListener)}
+     * @param email
+     */
     void resetPassword(String email);
 
     // sync actions
 
-    //! Returns current user ID if signed in, or null in other cases
+    /**
+     * Returns current user ID if signed in, or null in other cases
+     */
     @Nullable String getUserID();
+
+    /**
+     * Returns current application pn or null if not set
+     * @return
+     */
     @Nullable String getAppPin();
 
     // listeners setters

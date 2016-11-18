@@ -101,6 +101,9 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
         Toast.makeText(this, R.string.text_device_list_sync_error, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Adapter for displaying devices list
+     */
     class DeviceListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;

@@ -1,6 +1,6 @@
 package com.appmon.control;
 
-import com.appmon.control.models.user.ISharedPreferences;
+import com.appmon.control.models.user.IPreferences;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.UserModel;
 import com.appmon.shared.DatabaseError;
@@ -9,13 +9,17 @@ import com.appmon.shared.ICloudServices;
 import com.appmon.shared.IDatabaseService;
 import com.appmon.shared.IUser;
 import com.appmon.shared.ResultListener;
+import com.appmon.shared.exceptions.AuthEmailTakenException;
+import com.appmon.shared.exceptions.AuthException;
+import com.appmon.shared.exceptions.AuthInvalidEmailException;
+import com.appmon.shared.exceptions.AuthWeakPasswordException;
+import com.appmon.shared.exceptions.AuthWrongPasswordException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -36,7 +40,7 @@ public class UserModelUnitTest {
     private ICloudServices mockedCloud;
 
     @Mock
-    private ISharedPreferences mockedPref;
+    private IPreferences mockedPref;
 
     @Mock
     private IUser user;
@@ -51,6 +55,9 @@ public class UserModelUnitTest {
     @Captor
     private ArgumentCaptor<ResultListener<Void, Throwable>> throwableResult;
 
+    @Captor
+    private ArgumentCaptor<ResultListener<IUser, Throwable>> throwableUserResult;
+
     private UserModel model;
 
     @Before
@@ -59,6 +66,74 @@ public class UserModelUnitTest {
         when(mockedCloud.getDatabase()).thenReturn(mockedDb);
         when(mockedAuth.getUser()).thenReturn(user);
         model = new UserModel(mockedCloud, mockedPref);
+    }
+
+    @Test
+    public void loginTest() {
+        IUserModel.ISignInListener l = mock(IUserModel.ISignInListener.class);
+        model.addSignInListener(l);
+        // early email check
+        model.signInWithEmail("wrong_email", "something");
+        verify(l).onFail(IUserModel.SignInError.INVALID_EMAIL);
+        reset(l);
+        // early password check
+        model.signInWithEmail("cool@email.com", "1");
+        verify(l).onFail(IUserModel.SignInError.WRONG_PASSWORD);
+        // wrong email
+        model.signInWithEmail("email@email.com", "coolpass");
+        verify(mockedAuth).signInWithEmail(any(String.class), any(String.class),
+                throwableUserResult.capture());
+        throwableUserResult.getValue().onFailure(new AuthInvalidEmailException(null));
+        verify(l).onFail(IUserModel.SignInError.INVALID_EMAIL);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthWrongPasswordException(null));
+        verify(l).onFail(IUserModel.SignInError.WRONG_PASSWORD);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthWrongPasswordException(null));
+        verify(l).onFail(IUserModel.SignInError.WRONG_PASSWORD);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthException(null));
+        throwableUserResult.getValue().onFailure(new Throwable());
+        verify(l, times(2)).onFail(IUserModel.SignInError.INTERNAL_ERROR);
+        reset(l);
+        // success
+        throwableUserResult.getValue().onSuccess(user);
+        verify(l).onSuccess();
+        model.removeSignInListener(l);
+    }
+
+    @Test
+    public void registerTest() {
+        IUserModel.IRegisterListener l = mock(IUserModel.IRegisterListener.class);
+        model.addRegisterListener(l);
+        // early email check
+        model.registerWithEmail("wrong_email", "something");
+        verify(l).onFail(IUserModel.RegisterError.INVALID_EMAIL);
+        reset(l);
+        // early password check
+        model.registerWithEmail("cool@email.com", "1");
+        verify(l).onFail(IUserModel.RegisterError.WEAK_PASSWORD);
+        // wrong email
+        model.registerWithEmail("email@email.com", "coolpass");
+        verify(mockedAuth).registerWithEmail(any(String.class), any(String.class),
+                throwableUserResult.capture());
+        throwableUserResult.getValue().onFailure(new AuthEmailTakenException(null));
+        verify(l).onFail(IUserModel.RegisterError.USER_EXISTS);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthInvalidEmailException(null));
+        verify(l).onFail(IUserModel.RegisterError.INVALID_EMAIL);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthWeakPasswordException(null));
+        verify(l).onFail(IUserModel.RegisterError.WEAK_PASSWORD);
+        reset(l);
+        throwableUserResult.getValue().onFailure(new AuthException(null));
+        throwableUserResult.getValue().onFailure(new Throwable());
+        verify(l, times(2)).onFail(IUserModel.RegisterError.INTERNAL_ERROR);
+        reset(l);
+        // success
+        throwableUserResult.getValue().onSuccess(user);
+        verify(l).onSuccess();
+        model.removeRegisterListener(l);
     }
 
     @Test

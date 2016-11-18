@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
-public class AndroidSharedPreferences implements ISharedPreferences {
+public class AndroidSharedPreferences implements IPreferences {
 
 
     SharedPreferences mPreferences;

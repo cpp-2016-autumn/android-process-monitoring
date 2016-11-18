@@ -1,6 +1,6 @@
 package com.appmon.control;
 
-import com.appmon.control.models.applistmodel.IAppListModel;;
+import com.appmon.control.models.applist.IAppListModel;;
 import com.appmon.control.presenters.AppListPresenter;
 import com.appmon.control.views.IAppListView;
 import com.appmon.shared.DatabaseError;

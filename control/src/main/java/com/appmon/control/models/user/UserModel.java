@@ -1,7 +1,6 @@
 package com.appmon.control.models.user;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.appmon.shared.DatabaseError;
 import com.appmon.shared.IAuthService;
@@ -34,19 +33,22 @@ public class UserModel implements IUserModel {
     private Set<IChangeClientPinListener> mChangeClientPinListener = new HashSet<>();
     private Set<IResetPasswordListener> mResetPasswordListeners = new HashSet<>();
 
-    private final ISharedPreferences mPreferences;
+    private final IPreferences mPreferences;
     private final IDatabaseService mDatabase;
     private final IAuthService mAuth;
     private String mUserRootPath;
     private IUser mUser;
 
-    public UserModel(ICloudServices cloudServices, ISharedPreferences preferences) {
+    public UserModel(ICloudServices cloudServices, IPreferences preferences) {
         mPreferences = preferences;
         mDatabase = cloudServices.getDatabase();
         mAuth = cloudServices.getAuth();
         updateUserInfo();
     }
 
+    /**
+     * updates toot path of user data
+     */
     private void updateUserInfo() {
         mUser = mAuth.getUser();
         if (mUser != null) {
@@ -56,6 +58,11 @@ public class UserModel implements IUserModel {
         }
     }
 
+    /**
+     * Transforms error, returned by auth service to enum
+     * @param ex error to transform
+     * @return transformed error
+     */
     private RegisterError authExceptionToRegisterError(Throwable ex) {
         try {
             throw ex;
@@ -66,13 +73,17 @@ public class UserModel implements IUserModel {
         } catch (AuthWeakPasswordException e) {
             return RegisterError.WEAK_PASSWORD;
         } catch (AuthException e) {
-            Log.w(LOG_TAG, "Internal auth error");
+            return RegisterError.INTERNAL_ERROR;
         } catch (Throwable e) {
-            Log.e(LOG_TAG, "Unhandled register error");
+            return RegisterError.INTERNAL_ERROR;
         }
-        return RegisterError.INTERNAL_ERROR;
     }
 
+    /**
+     * Transforms error, returned by auth service to enum
+     * @param ex error to transform
+     * @return transformed error
+     */
     private SignInError authExceptionToSignInError(Throwable ex) {
         try {
             throw ex;
@@ -81,11 +92,10 @@ public class UserModel implements IUserModel {
         } catch (AuthWrongPasswordException e) {
             return SignInError.WRONG_PASSWORD;
         } catch (AuthException e) {
-            Log.w(LOG_TAG, "Internal auth error");
+            return  SignInError.INTERNAL_ERROR;
         } catch (Throwable e) {
-            Log.e(LOG_TAG, "Unhandled register error");
+            return  SignInError.INTERNAL_ERROR;
         }
-        return  SignInError.INTERNAL_ERROR;
     }
 
     @Override

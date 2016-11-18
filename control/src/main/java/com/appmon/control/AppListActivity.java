@@ -106,6 +106,9 @@ public class AppListActivity extends AppCompatActivity implements IAppListView {
         mListAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * ListView adapter for displaying simple items with checkboxes
+     */
     class AppListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;

@@ -1,8 +1,6 @@
 package com.appmon.control.presenters;
 
-import android.util.SparseArray;
-
-import com.appmon.control.models.applistmodel.IAppListModel;
+import com.appmon.control.models.applist.IAppListModel;
 import com.appmon.control.views.IAppListView;
 import com.appmon.shared.DatabaseError;
 import com.appmon.shared.entities.PackageInfo;
@@ -31,6 +29,9 @@ public class AppListPresenter implements IAppListPresenter {
         mFilter = "";
     }
 
+    /**
+     * Generates new app index and app list for displaying in view
+     */
     private void updateView() {
         mIndexedApps.clear();
         List<PackageInfo> viewList = new ArrayList<>();

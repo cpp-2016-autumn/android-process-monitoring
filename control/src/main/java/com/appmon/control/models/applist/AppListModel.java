@@ -1,4 +1,4 @@
-package com.appmon.control.models.applistmodel;
+package com.appmon.control.models.applist;
 
 import com.appmon.shared.DatabaseChildListener;
 import com.appmon.shared.DatabaseError;
@@ -6,7 +6,6 @@ import com.appmon.shared.IAuthService;
 import com.appmon.shared.ICloudServices;
 import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.IDatabaseService;
-import com.appmon.shared.IUser;
 import com.appmon.shared.entities.PackageInfo;
 
 import java.util.HashMap;

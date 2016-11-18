@@ -29,6 +29,9 @@ public class DeviceListPresenter implements IDeviceListPresenter, IDeviceListMod
     }
 
 
+    /**
+     * Generates new device index and device list for displaying in view
+     */
     private void updateView() {
         mIndexedDevices.clear();
         List<DeviceInfo> viewList = new ArrayList<>();

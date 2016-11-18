@@ -1,15 +1,12 @@
 package com.appmon.control.persistence;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.appmon.control.ControlApp;
-import com.appmon.control.models.applistmodel.AppListModel;
-import com.appmon.control.models.applistmodel.IAppListModel;
+import com.appmon.control.models.applist.AppListModel;
+import com.appmon.control.models.applist.IAppListModel;
 import com.appmon.control.models.devicelist.DeviceListModel;
 import com.appmon.control.models.devicelist.IDeviceListModel;
 import com.appmon.control.models.user.AndroidSharedPreferences;
-import com.appmon.control.models.user.ISharedPreferences;
+import com.appmon.control.models.user.IPreferences;
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.models.user.UserModel;
 import com.appmon.shared.firebase.FirebaseCloudServices;
@@ -38,7 +35,7 @@ public class ModelManager {
     private IDeviceListModel mDeviceListModel = null;
     private IAppListModel mAppListModel = null;
 
-    ISharedPreferences mAndroidPref;
+    IPreferences mAndroidPref;
 
     private ModelManager() {
         if (ControlApp.getContext() != null) {
@@ -46,6 +43,10 @@ public class ModelManager {
         }
     }
 
+    /**
+     * User model getter
+     * @return returns user model instance (lazy init)
+     */
     public synchronized IUserModel getUserModel() {
         if (mUserModel == null) {
             mUserModel = new UserModel(FirebaseCloudServices.getInstance(), mAndroidPref);
@@ -53,6 +54,10 @@ public class ModelManager {
         return mUserModel;
     }
 
+    /**
+     * Device list model getter
+     * @return returns device list model instance (lazy init)
+     */
     public synchronized IDeviceListModel getDeviceListModel() {
         if (mDeviceListModel == null) {
             mDeviceListModel = new DeviceListModel(FirebaseCloudServices.getInstance());
@@ -60,6 +65,10 @@ public class ModelManager {
         return mDeviceListModel;
     }
 
+    /**
+     * App list model getter
+     * @return returns app list model instance (lazy init)
+     */
     public synchronized IAppListModel getAppListModel() {
         if (mAppListModel == null) {
             mAppListModel = new AppListModel(FirebaseCloudServices.getInstance());

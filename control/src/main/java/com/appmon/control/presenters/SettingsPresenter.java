@@ -84,6 +84,7 @@ public class SettingsPresenter implements ISettingsPresenter {
             mView.clearInputErrors();
             // validation of password equality
             if (!password.equals(passwordRepeat)) {
+                mView.setProgress(false);
                 mView.showInputError(ISettingsView.InputError.DIFFERENT_PASSWORDS);
                 return;
             }
@@ -106,6 +107,7 @@ public class SettingsPresenter implements ISettingsPresenter {
             mView.clearInputErrors();
             // validation of pin equality
             if (!pin.equals(pinRepeat)) {
+                mView.setProgress(false);
                 mView.showInputError(ISettingsView.InputError.DIFFERENT_APP_PINS);
                 return;
             }

@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void showProgress(boolean state) {
+    public void setProgressVisible(boolean state) {
         if (state) {
             mLoginForm.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);

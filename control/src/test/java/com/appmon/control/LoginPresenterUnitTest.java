@@ -2,9 +2,7 @@ package com.appmon.control;
 
 import com.appmon.control.models.user.IUserModel;
 import com.appmon.control.presenters.LoginPresenter;
-import com.appmon.control.presenters.WelcomePresenter;
 import com.appmon.control.views.ILoginView;
-import com.appmon.control.views.IWelcomeView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,21 +57,21 @@ public class LoginPresenterUnitTest {
         signInListener.getValue().onSuccess();
         // if signed in => hide progress (below) and go to Device List
         verify(mockedView).startDeviceListActivity();
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         reset(mockedView);
         // failures
         signInListener.getValue().onFail(IUserModel.SignInError.WRONG_PASSWORD);
         verify(mockedView).showInputError(ILoginView.InputError.WRONG_PASSWORD);
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         reset(mockedView);
 
         signInListener.getValue().onFail(IUserModel.SignInError.INVALID_EMAIL);
         verify(mockedView).showInputError(ILoginView.InputError.INVALID_EMAIL);
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         // test sign In action code. It must invoke model method, show Progress and clear errors
         presenter.signInWithEmail("Login", "Password");
         verify(mockedModel).signInWithEmail(any(String.class), any(String.class));
-        verify(mockedView).showProgress(true);
+        verify(mockedView).setProgressVisible(true);
         verify(mockedView).clearInputErrors();
     }
 

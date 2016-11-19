@@ -1,5 +1,6 @@
 package com.appmon.control.models.applist;
 
+import com.appmon.control.models.DatabaseBridgeManager;
 import com.appmon.shared.DatabaseChildListener;
 import com.appmon.shared.DatabaseError;
 import com.appmon.shared.IAuthService;
@@ -8,14 +9,13 @@ import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.IDatabaseService;
 import com.appmon.shared.entities.PackageInfo;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class AppListModel implements IAppListModel {
 
+//    private IDatabaseService mDatabaseBridgeManager;
+//
+//    private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
+    private DatabaseBridgeManager<PresenterOps> mDatabaseBridgeManager;
     private IDatabaseService mDatabase;
-
-    private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
 
     private String lastUserId = null;
 
@@ -23,15 +23,8 @@ public class AppListModel implements IAppListModel {
 
     public AppListModel(ICloudServices cloudServices) {
         mDatabase = cloudServices.getDatabase();
-        mListenerBridges = new HashMap<>();
+        mDatabaseBridgeManager = new DatabaseBridgeManager<>(mDatabase);
         mAuth = cloudServices.getAuth();
-    }
-
-
-    private void clearListeners() {
-        for (DatabaseChildListener l : mListenerBridges.values()) {
-            mDatabase.removeChildListener(l);
-        }
     }
 
     private String getRootPath() {
@@ -39,7 +32,7 @@ public class AppListModel implements IAppListModel {
             return null;
         String userId = mAuth.getUser().getUserID();
         if (!userId.equals(lastUserId)) {
-            clearListeners();
+            mDatabaseBridgeManager.clearListeners();
             lastUserId = userId;
         }
         return userId + "/apps/";
@@ -55,14 +48,14 @@ public class AppListModel implements IAppListModel {
             public void onCanceled(DatabaseError error) {
                 // Database event are queued, so we must check if
                 // presenter still connected
-                if (mListenerBridges.containsKey(presenter)) {
+                if (mDatabaseBridgeManager.isObjectRegistered(presenter)) {
                     presenter.onAppListSyncFailed(error);
                 }
             }
 
             @Override
             public void onChildAdded(IDataSnapshot snapshot) {
-                if (mListenerBridges.containsKey(presenter)) {
+                if (mDatabaseBridgeManager.isObjectRegistered(presenter)) {
                     presenter.onAppAdded(snapshot.getKey(),
                             snapshot.getValue(PackageInfo.class));
                 }
@@ -70,7 +63,7 @@ public class AppListModel implements IAppListModel {
 
             @Override
             public void onChildChanged(IDataSnapshot snapshot) {
-                if (mListenerBridges.containsKey(presenter)) {
+                if (mDatabaseBridgeManager.isObjectRegistered(presenter)) {
                     presenter.onAppChanged(snapshot.getKey(),
                             snapshot.getValue(PackageInfo.class));
                 }
@@ -78,21 +71,18 @@ public class AppListModel implements IAppListModel {
 
             @Override
             public void onChildRemoved(IDataSnapshot prevSnapshot) {
-                if (mListenerBridges.containsKey(presenter)) {
+                if (mDatabaseBridgeManager.isObjectRegistered(presenter)) {
                     presenter.onAppRemoved(prevSnapshot.getKey());
                 }
             }
         };
-        mDatabase.addChildListener(getRootPath() + presenter.getDeviceId(), listener);
-        mListenerBridges.put(presenter, listener);
+        mDatabaseBridgeManager.addListener(getRootPath() + presenter.getDeviceId(), presenter,
+                listener);
     }
 
     @Override
     public void removePresenter(PresenterOps presenter) {
-        DatabaseChildListener listener =  mListenerBridges.remove(presenter);
-        if (listener != null) {
-            mDatabase.removeChildListener(listener);
-        }
+        mDatabaseBridgeManager.removeListener(presenter);
     }
 
     @Override

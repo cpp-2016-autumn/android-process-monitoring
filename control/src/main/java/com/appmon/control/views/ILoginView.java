@@ -20,7 +20,7 @@ public interface ILoginView extends IBaseView {
      * Triggered when progress must be showed or hidden
      * @param state new progress state
      */
-    void showProgress(boolean state);
+    void setProgressVisible(boolean state);
 
     /**
      * Triggered when message must me showed

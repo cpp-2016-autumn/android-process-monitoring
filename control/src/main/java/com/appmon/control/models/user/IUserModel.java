@@ -66,7 +66,7 @@ public interface IUserModel extends IBaseModel {
      * Changes application pin-code.
      * Returns results trough {@link IChangeAppPinListener}
      * Add listener with {@link #addChangeAppPinListener(IChangeAppPinListener)}
-     * @param pin
+     * @param pin new pin. can be null if pin must be cleared
      */
     void changeAppPin(String pin);
 

@@ -187,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
     }
 
     @Override
-    public void setProgress(boolean value) {
+    public void setProgressVisible(boolean value) {
         if (value) {
             mSettingsForm.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);

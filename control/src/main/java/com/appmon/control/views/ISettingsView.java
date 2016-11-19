@@ -52,5 +52,5 @@ public interface ISettingsView extends IBaseView {
      * Triggered when progress bust be showed or hidden
      * @param value
      */
-    void setProgress(boolean value);
+    void setProgressVisible(boolean value);
 }

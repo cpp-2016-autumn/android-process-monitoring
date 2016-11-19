@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterView
     }
 
     @Override
-    public void showProgress(boolean state) {
+    public void setProgressVisible(boolean state) {
         if (state) {
             mRegisterForm.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);

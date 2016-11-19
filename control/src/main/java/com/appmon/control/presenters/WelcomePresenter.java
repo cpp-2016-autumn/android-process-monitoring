@@ -18,13 +18,36 @@ public class WelcomePresenter implements IWelcomePresenter {
         mModel = model;
     }
 
+    @Override
+    public void postPin(String pin) {
+        if (mModel.getUserID() != null) {
+            String realPin = mModel.getAppPin();
+            if (mView != null) {
+                if (realPin == null || realPin.equals(pin)) {
+                    mView.startDeviceListActivity();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void logOut() {
+        mModel.signOut();
+        mView.setPinFormVisibility(false);
+    }
 
     @Override
     public void checkUserState() {
         if (mModel.getUserID() != null) {
             if (mView != null) {
-                mView.startDeviceListActivity();
+                if (mModel.getAppPin() == null) {
+                    mView.startDeviceListActivity();
+                } else {
+                    mView.setPinFormVisibility(true);
+                }
             }
+        } else {
+            mView.setPinFormVisibility(false);
         }
     }
 

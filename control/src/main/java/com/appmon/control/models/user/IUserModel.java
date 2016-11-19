@@ -23,26 +23,81 @@ public interface IUserModel extends IBaseModel {
     // provided error enumerations
 
     enum ChangeAppPinError { WEAK_PIN }
-    enum ChangeClientPinError { WEAK_PIN }
-    enum ChangePasswordError { WEAK_PASSWORD }
-    enum RegisterError { WEAK_PASSWORD, INVALID_EMAIL, USER_EXISTS }
-    enum SignInError {INVALID_EMAIL, WRONG_PASSWORD }
-    enum ResetPasswordError { INVALID_USER }
+    enum ChangeClientPinError { WEAK_PIN, INTERNAL_ERROR }
+    enum ChangePasswordError { WEAK_PASSWORD, INTERNAL_ERROR }
+    enum RegisterError { WEAK_PASSWORD, INVALID_EMAIL, USER_EXISTS, INTERNAL_ERROR }
+    enum SignInError {INVALID_EMAIL, WRONG_PASSWORD, INTERNAL_ERROR }
+    enum ResetPasswordError { INVALID_USER, INTERNAL_ERROR }
 
     // async actions
 
+    /**
+     * Signs in user with given email and password.
+     * Returns results trough {@link ISignInListener}
+     * Add listener with {@link #addSignInListener(ISignInListener)}
+     * @param email
+     * @param password
+     */
     void signInWithEmail(String email, String password);
+
+    /**
+     * Registers user with given email and password.
+     * Returns results trough {@link IRegisterListener}.
+     * Add listener with {@link #addRegisterListener(IRegisterListener)}
+     * @param email
+     * @param password
+     */
     void registerWithEmail(String email, String password);
+
+    /**
+     * Signs user out. Will be executed immediately.
+     */
     void signOut();
+
+    /**
+     * Changes user password.
+     * Returns results trough {@link IChangePasswordListener}
+     * Add listener with {@link #addChangePasswordListener(IChangePasswordListener)}
+     * @param password
+     */
     void changePassword(String password);
+
+    /**
+     * Changes application pin-code.
+     * Returns results trough {@link IChangeAppPinListener}
+     * Add listener with {@link #addChangeAppPinListener(IChangeAppPinListener)}
+     * @param pin new pin. can be null if pin must be cleared
+     */
     void changeAppPin(String pin);
+
+    /**
+     * Changes client pin-code.
+     * Returns results trough {@link IChangeClientPinListener}
+     * Add listener with {@link #addChangeClientPinListener(IChangeClientPinListener)}
+     * @param pin
+     */
     void changeClientPin(String pin);
+
+    /**
+     * Sends email with password reset link.
+     * Triggers {@link IResetPasswordListener} when finished.
+     * Add listener with {@link #addResetPasswordListener(IResetPasswordListener)}
+     * @param email
+     */
     void resetPassword(String email);
 
     // sync actions
 
-    //! Returns current user ID if signed in, or null in other cases
+    /**
+     * Returns current user ID if signed in, or null in other cases
+     */
     @Nullable String getUserID();
+
+    /**
+     * Returns current application pn or null if not set
+     * @return
+     */
+    @Nullable String getAppPin();
 
     // listeners setters
 

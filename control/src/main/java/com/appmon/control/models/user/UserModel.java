@@ -1,8 +1,18 @@
 package com.appmon.control.models.user;
 
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
+import com.appmon.shared.DatabaseError;
+import com.appmon.shared.IAuthService;
+import com.appmon.shared.ICloudServices;
+import com.appmon.shared.IDatabaseService;
+import com.appmon.shared.IUser;
+import com.appmon.shared.ResultListener;
+import com.appmon.shared.exceptions.AuthEmailTakenException;
+import com.appmon.shared.exceptions.AuthException;
+import com.appmon.shared.exceptions.AuthInvalidEmailException;
+import com.appmon.shared.exceptions.AuthWeakPasswordException;
+import com.appmon.shared.exceptions.AuthWrongPasswordException;
 import com.appmon.shared.utils.Validator;
 
 import java.util.HashSet;
@@ -13,7 +23,8 @@ import java.util.Set;
  * it just validates input for format correctness
  */
 public class UserModel implements IUserModel {
-
+    private final String LOG_TAG = "UserModel";
+    private final String PREFERENCES_APP_PIN_KEY = "app_pin";
     // listener sets
     private Set<IRegisterListener> mRegisterListeners = new HashSet<>();
     private Set<ISignInListener> mSignInListeners = new HashSet<>();
@@ -22,16 +33,76 @@ public class UserModel implements IUserModel {
     private Set<IChangeClientPinListener> mChangeClientPinListener = new HashSet<>();
     private Set<IResetPasswordListener> mResetPasswordListeners = new HashSet<>();
 
-    private SharedPreferences mAndroidPref;
+    private final IPreferences mPreferences;
+    private final IDatabaseService mDatabase;
+    private final IAuthService mAuth;
+    private String mUserRootPath;
+    private IUser mUser;
 
-    public UserModel(SharedPreferences androidPref) {
-        mAndroidPref = androidPref;
+    public UserModel(ICloudServices cloudServices, IPreferences preferences) {
+        mPreferences = preferences;
+        mDatabase = cloudServices.getDatabase();
+        mAuth = cloudServices.getAuth();
+        updateUserInfo();
+    }
+
+    /**
+     * updates toot path of user data
+     */
+    private void updateUserInfo() {
+        mUser = mAuth.getUser();
+        if (mUser != null) {
+            mUserRootPath = mUser.getUserID() + "/";
+        } else {
+            mUserRootPath = null;
+        }
+    }
+
+    /**
+     * Transforms error, returned by auth service to enum
+     * @param ex error to transform
+     * @return transformed error
+     */
+    private RegisterError authExceptionToRegisterError(Throwable ex) {
+        try {
+            throw ex;
+        } catch (AuthEmailTakenException e) {
+            return RegisterError.USER_EXISTS;
+        } catch (AuthInvalidEmailException e) {
+            return RegisterError.INVALID_EMAIL;
+        } catch (AuthWeakPasswordException e) {
+            return RegisterError.WEAK_PASSWORD;
+        } catch (AuthException e) {
+            return RegisterError.INTERNAL_ERROR;
+        } catch (Throwable e) {
+            return RegisterError.INTERNAL_ERROR;
+        }
+    }
+
+    /**
+     * Transforms error, returned by auth service to enum
+     * @param ex error to transform
+     * @return transformed error
+     */
+    private SignInError authExceptionToSignInError(Throwable ex) {
+        try {
+            throw ex;
+        } catch (AuthInvalidEmailException e) {
+            return SignInError.INVALID_EMAIL;
+        } catch (AuthWrongPasswordException e) {
+            return SignInError.WRONG_PASSWORD;
+        } catch (AuthException e) {
+            return  SignInError.INTERNAL_ERROR;
+        } catch (Throwable e) {
+            return  SignInError.INTERNAL_ERROR;
+        }
     }
 
     @Override
     public void signOut() {
-        // NOTE: For testing
-        mAndroidPref.edit().putBoolean("signedIn", false).apply();
+        mAuth.signOut();
+        mUser = null;
+        mUserRootPath = null;
     }
 
     @Override
@@ -50,11 +121,23 @@ public class UserModel implements IUserModel {
             }
             return;
         }
-        // TODO: Firebase register
-        mAndroidPref.edit().putBoolean("signedIn", true).apply();
-        for (IRegisterListener l : mRegisterListeners) {
-            l.onSuccess();
-        }
+        mAuth.registerWithEmail(email, password, new ResultListener<IUser, Throwable>() {
+            @Override
+            public void onSuccess(IUser value) {
+                updateUserInfo();
+                for (IRegisterListener l : mRegisterListeners) {
+                    l.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                RegisterError registerError = authExceptionToRegisterError(error);
+                for (IRegisterListener l : mRegisterListeners) {
+                    l.onFail(registerError);
+                }
+            }
+        });
     }
 
     @Override
@@ -72,11 +155,23 @@ public class UserModel implements IUserModel {
             }
             return;
         }
-        // TODO: Firebase sign in
-        mAndroidPref.edit().putBoolean("signedIn", true).apply();
-        for (ISignInListener l : mSignInListeners) {
-            l.onSuccess();
-        }
+        mAuth.signInWithEmail(email, password, new ResultListener<IUser, Throwable>() {
+            @Override
+            public void onSuccess(IUser value) {
+                updateUserInfo();
+                for (ISignInListener l : mSignInListeners) {
+                    l.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                SignInError signInError = authExceptionToSignInError(error);
+                for (ISignInListener l : mSignInListeners) {
+                    l.onFail(signInError);
+                }
+            }
+        });
     }
 
     @Override
@@ -88,25 +183,56 @@ public class UserModel implements IUserModel {
             }
             return;
         }
-        // TODO: Firebase change password
-        for (IChangePasswordListener l : mChangePasswordListeners) {
-            l.onSuccess();
+        // ignore on signed out user
+        if (mUser == null) {
+            return;
         }
+        mUser.changePassword(password, new ResultListener<Void, IUser.ChangePasswordError>() {
+            @Override
+            public void onSuccess(Void value) {
+                for (IChangePasswordListener l : mChangePasswordListeners) {
+                    l.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(IUser.ChangePasswordError error) {
+                for (IChangePasswordListener l : mChangePasswordListeners) {
+                    switch (error) {
+                        case WEAK_PASSWORD:
+                            l.onFail(ChangePasswordError.WEAK_PASSWORD);
+                            break;
+                        default:
+                            l.onFail(ChangePasswordError.INTERNAL_ERROR);
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void changeAppPin(String pin) {
         // validation
-        if (!Validator.validatePin(pin)) {
-            for (IChangeAppPinListener l : mChangeAppPinListeners) {
-                l.onFail(ChangeAppPinError.WEAK_PIN);
+        if (pin == null) {
+            mPreferences.remove(PREFERENCES_APP_PIN_KEY);
+        } else {
+            if (!Validator.validatePin(pin)) {
+                for (IChangeAppPinListener l : mChangeAppPinListeners) {
+                    l.onFail(ChangeAppPinError.WEAK_PIN);
+                }
+                return;
             }
-            return;
+            mPreferences.setString(PREFERENCES_APP_PIN_KEY, pin);
         }
-        // TODO: change App pin
         for (IChangeAppPinListener l : mChangeAppPinListeners) {
             l.onSuccess();
         }
+    }
+
+    @Nullable
+    @Override
+    public String getAppPin() {
+        return mPreferences.getString(PREFERENCES_APP_PIN_KEY);
     }
 
     @Override
@@ -116,11 +242,23 @@ public class UserModel implements IUserModel {
             for (IChangeClientPinListener l : mChangeClientPinListener) {
                 l.onFail(ChangeClientPinError.WEAK_PIN);
             }
+            return;
         }
-        // TODO: Write pin to Firebase
-        for (IChangeClientPinListener l : mChangeClientPinListener) {
-            l.onSuccess();
-        }
+        mDatabase.setValue(mUserRootPath + "pin", pin, new ResultListener<Void, DatabaseError>() {
+            @Override
+            public void onSuccess(Void value) {
+                for (IChangeClientPinListener l : mChangeClientPinListener) {
+                    l.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+                for (IChangeClientPinListener l : mChangeClientPinListener) {
+                    l.onFail(ChangeClientPinError.INTERNAL_ERROR);
+                }
+            }
+        });
     }
 
     @Override
@@ -131,18 +269,28 @@ public class UserModel implements IUserModel {
             }
             return;
         }
-        // TODO: Firebase reset
-        for (IResetPasswordListener l: mResetPasswordListeners) {
-            l.onSuccess();
-        }
+        mAuth.resetPassword(email, new ResultListener<Void, Throwable>() {
+            @Override
+            public void onSuccess(Void value) {
+                for (IResetPasswordListener l: mResetPasswordListeners) {
+                    l.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                for (IResetPasswordListener l: mResetPasswordListeners) {
+                    l.onFail(ResetPasswordError.INTERNAL_ERROR);
+                }
+            }
+        });
     }
 
     @Nullable
     @Override
     public String getUserID() {
-        // TODO: Firebase get UID
-        if (mAndroidPref.getBoolean("signedIn", false)) {
-            return "UID";
+        if (mUser != null) {
+            return mUser.getUserID();
         }
         return null;
     }

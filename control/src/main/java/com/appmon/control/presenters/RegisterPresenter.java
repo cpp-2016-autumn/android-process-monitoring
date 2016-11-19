@@ -20,13 +20,13 @@ public class RegisterPresenter implements IRegisterPresenter {
         mRegisterListener = new IUserModel.IRegisterListener() {
             @Override
             public void onSuccess() {
-                mView.showProgress(false);
+                mView.setProgressVisible(false);
                 mView.startDeviceListActivity();
             }
 
             @Override
             public void onFail(IUserModel.RegisterError error) {
-                mView.showProgress(false);
+                mView.setProgressVisible(false);
                 switch (error) {
                     case USER_EXISTS:
                         mView.showInputError(IRegisterView.InputError.USER_EXISTS);
@@ -46,7 +46,7 @@ public class RegisterPresenter implements IRegisterPresenter {
     public void registerWithEmail(String email, String password) {
         if (mView != null) {
             mView.clearInputErrors();
-            mView.showProgress(true);
+            mView.setProgressVisible(true);
         }
         mModel.registerWithEmail(email, password);
     }

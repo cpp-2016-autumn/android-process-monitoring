@@ -25,20 +25,29 @@ public class WelcomePresenterUnitTest {
     @Before
     public void setup() {
         when(mockedModel.getUserID()).thenReturn(null, "user");
+        when(mockedModel.getAppPin()).thenReturn(null, "1234");
         presenter = new WelcomePresenter(mockedModel);
         presenter.attachView(mockedView);
     }
 
     @Test
     public void userCheckTest() {
-        // first invocation with null
+        // first invocation with null user
         presenter.checkUserState();
         verify(mockedView, never()).startDeviceListActivity();
-        // second, with some value
+        // not null user but null pin -> open devices
         presenter.checkUserState();
         verify(mockedView).startDeviceListActivity();
-        // in model only 2 getUserID calls must be registred
-        verify(mockedModel, times(2)).getUserID();
+        verify(mockedView, never()).setPinFormVisibility(true);
+        reset(mockedView);
+        // opposite
+        presenter.checkUserState();
+        verify(mockedView, never()).startDeviceListActivity();
+        verify(mockedView, never()).startDeviceListActivity();
+
+        verify(mockedModel, times(3)).getUserID();
+        // last 2 times
+        verify(mockedModel, times(2)).getAppPin();
     }
 
     @Test
@@ -51,6 +60,29 @@ public class WelcomePresenterUnitTest {
         verifyZeroInteractions(mockedModel);
     }
 
+    @Test
+    public void logOutTest() {
+        presenter.logOut();
+        verify(mockedView).setPinFormVisibility(false);
+        verify(mockedModel).signOut();
+    }
+
+    @Test
+    public void postPinTest() {
+        // with null user
+        presenter.postPin("any symbols");
+        verifyNoMoreInteractions(mockedView);
+        // with not null user, when pin is not set
+        presenter.postPin("some pin");
+        verify(mockedView).startDeviceListActivity();
+        reset(mockedView);
+        // with not null user, with right pin
+        presenter.postPin("1234");
+        // with not null user, wrong pin
+        verify(mockedView).startDeviceListActivity();
+        presenter.postPin("4321");
+        verifyNoMoreInteractions(mockedView);
+    }
     @Test
     public void detachedViewTest() {
         // additional view

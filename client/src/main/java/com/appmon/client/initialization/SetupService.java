@@ -11,20 +11,27 @@ import com.appmon.client.initialization.login.LoginActivity;
 import com.appmon.client.subscribers.blocking.BlockingService;
 
 /**
- * An {@link IntentService} subclass for handling service setup tasks.
+ * An {@link IntentService} for handling service setup tasks.
  * Handles initialization and termination of blocking services.
- * Created by MikeSotnichek on 11/1/2016.
  */
 public class SetupService extends IntentService {
     private static final String ACTION_INIT = "com.appmon.client.action.INIT";
     private static final String ACTION_TERMINATE = "com.appmon.client.action.TERMINATE";
 
+    /**
+     * Starts this service to handle initialization in the specified context.
+     * @param context A context to start this service in.
+     */
     public static void StartInit(Context context) {
         Intent intent = new Intent(context, SetupService.class);
         intent.setAction(ACTION_INIT);
         context.startService(intent);
     }
 
+    /**
+     * Starts this service to handle termination in the specified context.
+     * @param context A context to start this service in.
+     */
     public static void StartTerm(Context context) {
         Intent intent = new Intent(context, SetupService.class);
         intent.setAction(ACTION_TERMINATE);
@@ -48,7 +55,7 @@ public class SetupService extends IntentService {
     }
 
     /**
-     * Handle initialization.
+     * Handles initialization.
      */
     private void handleInit() {
         //hide icon
@@ -70,7 +77,7 @@ public class SetupService extends IntentService {
 
 
     /**
-     * Handle termination.
+     * Handles termination.
      */
     private void handleTerm() {
         //show icon

@@ -8,9 +8,14 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.appmon.client.bus.Bus;
+import com.appmon.client.bus.CloudMessage;
 import com.appmon.client.bus.Topic;
 import com.appmon.shared.entities.PackageInfo;
 
+/**
+ * Listens for package installation, removal and sends relevant cloud updates.
+ * Publishes to {@link Topic#WRITE_TO_CLOUD}, {@link Topic#DELETE_FROM_CLOUD}.
+ */
 public class PackageUpdateManager extends BroadcastReceiver {
     private static final String ACTION_ADDED = "android.intent.action.PACKAGE_ADDED";
     private static final String ACTION_REMOVED = "android.intent.action.PACKAGE_REMOVED";

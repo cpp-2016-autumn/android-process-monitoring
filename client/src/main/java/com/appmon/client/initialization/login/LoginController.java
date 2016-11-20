@@ -13,7 +13,7 @@ import com.appmon.shared.ResultListener;
 import com.appmon.shared.utils.Validator;
 
 /**
- * Controls LoginActivity
+ * Controls {@code LoginActivity}.
  */
 public class LoginController implements ILoginController {
     private static LoginController Instance = new LoginController();

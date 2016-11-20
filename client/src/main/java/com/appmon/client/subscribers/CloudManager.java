@@ -1,9 +1,9 @@
 package com.appmon.client.subscribers;
 
-import android.app.Notification;
 import android.util.Log;
 
 import com.appmon.client.bus.Bus;
+import com.appmon.client.bus.CloudMessage;
 import com.appmon.client.bus.Message;
 import com.appmon.client.bus.Topic;
 import com.appmon.shared.DatabaseChildListener;
@@ -15,6 +15,11 @@ import com.appmon.shared.ResultListener;
 import com.appmon.shared.entities.PackageInfo;
 import com.appmon.shared.firebase.FirebaseCloudServices;
 
+/**
+ * Listens data updates on the cloud. Sends information to the cloud.
+ * It is an {@link ISubscriber}, subscribed to {@link Topic#WRITE_TO_CLOUD} and {@link Topic#DELETE_FROM_CLOUD}.
+ * Publishes to {@link Topic#APP_STATE_UPDATE}, {@link Topic#PIN_UPDATE}.
+ */
 public class CloudManager implements ISubscriber {
 
     private Bus mBus;

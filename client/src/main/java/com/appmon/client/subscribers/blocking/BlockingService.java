@@ -22,14 +22,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Listens for accessibility events, notifies if an app should be blocked.
+ * It is an {@link ISubscriber}, subscribed to {@link Topic#APP_STATE_UPDATE} and {@link Topic#UNBLOCK_APP}.
+ */
 public class BlockingService extends AccessibilityService implements ISubscriber {
 
+    /**
+     * Other managers.
+     */
     private SubscriberManager mSubscriberManager;
+    /**
+     * Information required to setup this service.
+     */
     private AccessibilityServiceInfo mAccessibilityInfo;
+    /**
+     * Set of all packages synchronized with the cloud.
+     */
     private Set<PackageInfo> mPackages;
+    /**
+     * Name of a package that was unlocked.
+     * null if no package is unlocked at the moment.
+     */
     private String mUnblockedPackageName = null;
 
-
+    /**
+     * A bus that manages communication between components
+     */
     private static Bus mBus;
 
     public static Bus getBusInstance() {
@@ -61,6 +80,9 @@ public class BlockingService extends AccessibilityService implements ISubscriber
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        if (!event.getPackageName().equals(mUnblockedPackageName)) {
+            mUnblockedPackageName = null;
+        }
         if (mUnblockedPackageName == null) {
             for (PackageInfo p : mPackages) {
                 if (p.getPackageName().equals(event.getPackageName())){
@@ -70,8 +92,6 @@ public class BlockingService extends AccessibilityService implements ISubscriber
                     break;
                 }
             }
-        } else if (!event.getPackageName().equals(mUnblockedPackageName)) {
-            mUnblockedPackageName = null;
         }
     }
 
@@ -117,5 +137,6 @@ public class BlockingService extends AccessibilityService implements ISubscriber
     @Override
     public void cleanUp() {
         mBus.unsubscribe(this, Topic.APP_STATE_UPDATE);
+        mBus.unsubscribe(this, Topic.UNBLOCK_APP);
     }
 }

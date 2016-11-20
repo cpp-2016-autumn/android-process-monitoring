@@ -13,12 +13,22 @@ import com.appmon.client.R;
 import com.appmon.client.bus.Message;
 import com.appmon.client.bus.Topic;
 
+/**
+ * Blocks an application by appearing on top of it.
+ * Checks for correct pin input and unlocks the app if the correct pin code was provided.
+ */
 public class BlockingActivity extends AppCompatActivity {
 
     private EditText mPasswordField;
     private String mPass;
     private String mPackageToUnlock;
 
+    /**
+     * Starts this activity with in the specified context, to block a package using a pin code.
+     * @param context Context to start the activity in.
+     * @param packageName Name of the blocked package.
+     * @param pin Pin code to unlock access.
+     */
     public static void startActivity(Context context, String packageName, String pin){
         Intent intent = new Intent(context.getApplicationContext(), BlockingActivity.class);
         intent.putExtra("Unlock package", packageName);

@@ -34,7 +34,10 @@ public class SubscriberManager {
     /**
      * List of applications blocked by default.
      */
-    private static final String[] BLOCKED_BY_DEFAULT = {"com.android.settings", "com.android.packageinstaller"};
+    private static final String[] BLOCKED_BY_DEFAULT = {
+            "com.android.settings",
+            "com.android.packageinstaller"
+    };
 
     private CloudManager mCloudManager = null;
     private PackageUpdateManager mPackageSubscriber = null;
@@ -45,7 +48,8 @@ public class SubscriberManager {
     /**
      * Sets up all the components.
      * Except the {@link Bus} and the {@link BlockingService}, which are managed by the BlockingService itself.
-     * @param bus A bus that was provided.
+     *
+     * @param bus     A bus that was provided.
      * @param context This application's context.
      * @param blocker A blocking service that was provided.
      */
@@ -72,7 +76,8 @@ public class SubscriberManager {
                 filter.addAction("android.intent.action.PACKAGE_REMOVED");
                 filter.addDataScheme("package");
                 mContext.registerReceiver(mPackageSubscriber, filter);
-                mCloudManager = new CloudManager(mBus, appsInfoPath, pinPath);
+                mCloudManager = new CloudManager(mBus,
+                        FirebaseCloudServices.getInstance().getDatabase(), appsInfoPath, pinPath);
                 mBlockingController = new BlockingController(mBus, mContext);
             }
         };
@@ -83,12 +88,14 @@ public class SubscriberManager {
 
     /**
      * Synchronizes application list on the device with the black list on the cloud.
+     *
      * @param deviceInfoPath Path to info about this device on the cloud.
-     * @param appListPath Path application list on the cloud.
-     * @param infoString Information about this device to be sent to the cloud.
-     * @param syncListener A listener that will be notified when this task is finished.
+     * @param appListPath    Path application list on the cloud.
+     * @param infoString     Information about this device to be sent to the cloud.
+     * @param syncListener   A listener that will be notified when this task is finished.
      */
-    private void syncInit(String deviceInfoPath, final String appListPath, String infoString, final ResultListener<Void, DatabaseError> syncListener) {
+    private void syncInit(String deviceInfoPath, final String appListPath, String infoString,
+                          final ResultListener<Void, DatabaseError> syncListener) {
         final IDatabaseService cloudDb = FirebaseCloudServices.getInstance().getDatabase();
 
         //set device name
@@ -112,12 +119,13 @@ public class SubscriberManager {
                 cloudDb.removeValueListener(this);
 
                 PackageManager pm = mContext.getPackageManager();
-                List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+                List<ApplicationInfo> packages =
+                        pm.getInstalledApplications(PackageManager.GET_META_DATA);
                 Set<PackageInfo> devicePackages = new HashSet<>();
                 for (ApplicationInfo info : packages) {
                     boolean isBlockedByDefault = false;
-                    for (String pn: BLOCKED_BY_DEFAULT) {
-                        if (pn.equals(info.packageName)){
+                    for (String pn : BLOCKED_BY_DEFAULT) {
+                        if (pn.equals(info.packageName)) {
                             isBlockedByDefault = true;
                             break;
                         }
@@ -148,20 +156,22 @@ public class SubscriberManager {
                 }
 
                 if (!dataToAdd.isEmpty()) {
-                    cloudDb.setValue(appListPath, dataToAdd, new ResultListener<Void, DatabaseError>() {
-                        @Override
-                        public void onFailure(DatabaseError error) {
-                            syncListener.onFailure(error);
-                        }
-                    });
+                    cloudDb.setValue(appListPath, dataToAdd,
+                            new ResultListener<Void, DatabaseError>() {
+                                @Override
+                                public void onFailure(DatabaseError error) {
+                                    syncListener.onFailure(error);
+                                }
+                            });
                 }
                 if (!dataToDelete.isEmpty()) {
-                    cloudDb.setValue(appListPath, dataToDelete, new ResultListener<Void, DatabaseError>() {
-                        @Override
-                        public void onFailure(DatabaseError error) {
-                            syncListener.onFailure(error);
-                        }
-                    });
+                    cloudDb.setValue(appListPath, dataToDelete,
+                            new ResultListener<Void, DatabaseError>() {
+                                @Override
+                                public void onFailure(DatabaseError error) {
+                                    syncListener.onFailure(error);
+                                }
+                            });
                 }
                 syncListener.onSuccess(null);
             }

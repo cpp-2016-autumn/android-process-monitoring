@@ -20,6 +20,7 @@ public class SetupService extends IntentService {
 
     /**
      * Starts this service to handle initialization in the specified context.
+     *
      * @param context A context to start this service in.
      */
     public static void StartInit(Context context) {
@@ -30,6 +31,7 @@ public class SetupService extends IntentService {
 
     /**
      * Starts this service to handle termination in the specified context.
+     *
      * @param context A context to start this service in.
      */
     public static void StartTerm(Context context) {
@@ -71,7 +73,7 @@ public class SetupService extends IntentService {
                 PackageManager.DONT_KILL_APP);
 
         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 

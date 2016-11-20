@@ -26,9 +26,9 @@ public class BlockingController implements ISubscriber {
     private Context mContext;
 
     /**
-     * A constructor
-     * @param bus
-     * @param context
+     * A constructor for a blocking controller.
+     * @param bus A bus which this controller will use.
+     * @param context Context of this controller.
      */
     public BlockingController(Bus bus, Context context) {
         mBus = bus;

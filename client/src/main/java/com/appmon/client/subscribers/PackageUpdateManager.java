@@ -34,7 +34,7 @@ public class PackageUpdateManager extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("PACKAGE", "RECEIVED STUFF: " + intent.getAction());
-        if(context == null) return;
+        if (context == null) return;
         String action = intent.getAction();
         if (!intent.getBooleanExtra(EXTRA_REPLACING, false)) {
             if (action.equals(ACTION_ADDED)) {

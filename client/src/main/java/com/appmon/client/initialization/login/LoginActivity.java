@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
             public void onClick(View view) {
                 if (view != null) {
                     InputMethodManager imm =
-                            (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 mController.attemptLogin(
@@ -105,6 +105,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
             case PASSWORD_INVALID:
                 mPasswordText.setError(getString(R.string.error_incorrect_password));
                 mPasswordText.requestFocus();
+                break;
+            default:
+                Toast.makeText(LoginActivity.this, R.string.auth_failed, Toast.LENGTH_LONG)
+                        .show();
                 break;
         }
     }

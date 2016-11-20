@@ -1,9 +1,5 @@
 package com.appmon.client.initialization.login;
 
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.appmon.shared.exceptions.AuthException;
 import com.appmon.shared.exceptions.AuthInvalidEmailException;
 import com.appmon.shared.exceptions.AuthWrongPasswordException;
 import com.appmon.shared.firebase.FirebaseCloudServices;
@@ -16,17 +12,19 @@ import com.appmon.shared.utils.Validator;
  * Controls {@code LoginActivity}.
  */
 public class LoginController implements ILoginController {
-    private static LoginController Instance = new LoginController();
-    private IAuthService authService;
+    private static LoginController Instance = null;
+    private IAuthService mAuthService;
 
     public static LoginController getInstance() {
+        if (Instance == null) Instance =
+                new LoginController(FirebaseCloudServices.getInstance().getAuth());
         return Instance;
     }
 
     private ILoginActivity mLoginActivity;
 
-    private LoginController() {
-        authService = FirebaseCloudServices.getInstance().getAuth();
+    public LoginController(IAuthService authService) {
+        mAuthService = authService;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class LoginController implements ILoginController {
         ILoginActivity.Error error = null;
 
         // Check for a valid email address/password.
-        if (TextUtils.isEmpty(email)) {
+        if (email.isEmpty()) {
             error = ILoginActivity.Error.EMAIL_EMPTY;
         } else if (!isEmailValid(email)) {
             error = ILoginActivity.Error.EMAIL_INVALID;
@@ -53,12 +51,14 @@ public class LoginController implements ILoginController {
         if (error != null) {
             mLoginActivity.setError(error);
         } else {
-            authService.signInWithEmail(email, password, new ResultListener<IUser, Throwable>() {
+            mAuthService.signInWithEmail(email, password, new ResultListener<IUser, Throwable>() {
                 @Override
                 public void onSuccess(IUser user) {
-                    mLoginActivity.loginSuccessful();
+                    mLoginActivity.setError(ILoginActivity.Error.NO_ERROR);
                     mLoginActivity.showProgress(false);
+                    mLoginActivity.loginSuccessful();
                 }
+
                 @Override
                 public void onFailure(Throwable err) {
                     mLoginActivity.showProgress(false);
@@ -69,7 +69,7 @@ public class LoginController implements ILoginController {
                     } catch (AuthInvalidEmailException e) {
                         mLoginActivity.setError(ILoginActivity.Error.EMAIL_INVALID);
                     } catch (Throwable e) {
-
+                        mLoginActivity.setError(ILoginActivity.Error.UNKNOWN_ERROR);
                     }
                 }
             });

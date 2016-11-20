@@ -25,6 +25,7 @@ public class Bus {
     /**
      * Publishes a message to its topic.
      * If any listeners are interested, notifies each listener about a message.
+     *
      * @param message A message to pass to listeners.
      */
     public void publish(Message message) {
@@ -40,8 +41,9 @@ public class Bus {
      * Subscribes an {@code ISubscriber} to a specified {@code Topic}.
      * Adds a subscriber to the list of subscribers of the specified topic.
      * Opens a new topic if nessesary.
+     *
      * @param subscriber An {@link ISubscriber} to add
-     * @param topic A topic which the subscriber is interested in.
+     * @param topic      A topic which the subscriber is interested in.
      */
     public void subscribe(ISubscriber subscriber, Topic topic) {
         if (mTopics.containsKey(topic)) {
@@ -55,8 +57,9 @@ public class Bus {
     /**
      * Unsubscribes an {@code ISubscriber} to a specified {@code Topic}.
      * Removes a subscriber from the list of subscribers of the specified topic.
+     *
      * @param subscriber An {@link ISubscriber} to remove
-     * @param topic A topic which the subscriber was interested in.
+     * @param topic      A topic which the subscriber was interested in.
      */
     public void unsubscribe(ISubscriber subscriber, Topic topic) {
         if (mTopics.containsKey(topic)) {

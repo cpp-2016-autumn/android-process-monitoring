@@ -12,21 +12,23 @@ public class CloudMessage<T> extends Message<T> {
 
     /**
      * Creates a message with some contents which should be sent
+     *
      * @param value The contents of this message.
-     * @param path The path where to place contents.
+     * @param path  The path where to place contents.
      * @param topic The topic of this message.
      */
-    public CloudMessage(T value, String path, Topic topic){
+    public CloudMessage(T value, String path, Topic topic) {
         super(value, topic);
         mPath = path;
     }
 
     /**
      * Public getter for the path.
+     *
      * @return The path value.
      */
-    public String getPath(){
-        return  mPath;
+    public String getPath() {
+        return mPath;
     }
 
 }

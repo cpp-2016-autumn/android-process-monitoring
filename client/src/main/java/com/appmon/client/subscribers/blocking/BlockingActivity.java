@@ -25,15 +25,18 @@ public class BlockingActivity extends AppCompatActivity {
 
     /**
      * Starts this activity with in the specified context, to block a package using a pin code.
-     * @param context Context to start the activity in.
+     *
+     * @param context     Context to start the activity in.
      * @param packageName Name of the blocked package.
-     * @param pin Pin code to unlock access.
+     * @param pin         Pin code to unlock access.
      */
-    public static void startActivity(Context context, String packageName, String pin){
+    public static void startActivity(Context context, String packageName, String pin) {
         Intent intent = new Intent(context.getApplicationContext(), BlockingActivity.class);
         intent.putExtra("Unlock package", packageName);
         intent.putExtra("Pin", pin);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.getApplicationContext().startActivity(intent);
     }
 

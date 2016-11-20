@@ -27,7 +27,7 @@ public class CloudManager implements ISubscriber {
     private DatabaseChildListener mAppInfoListener;
     private DatabaseValueListener mPinListener;
 
-    public CloudManager(Bus bus, String appInfoPath, String pinPath) {
+    public CloudManager(Bus bus, IDatabaseService dbService, String appInfoPath, String pinPath) {
         mBus = bus;
         mBus.subscribe(this, Topic.WRITE_TO_CLOUD);
         mBus.subscribe(this, Topic.DELETE_FROM_CLOUD);
@@ -39,6 +39,7 @@ public class CloudManager implements ISubscriber {
                 Message<PackageInfo> message = new Message<>(info, Topic.APP_STATE_UPDATE);
                 mBus.publish(message);
             }
+
             @Override
             public void onChildChanged(IDataSnapshot snapshot) {
                 PackageInfo info = snapshot.getValue(PackageInfo.class);
@@ -49,12 +50,13 @@ public class CloudManager implements ISubscriber {
         mPinListener = new DatabaseValueListener() {
             @Override
             public void onChanged(IDataSnapshot snapshot) {
-                Message<String> message = new Message<>(snapshot.getValue().toString(), Topic.PIN_UPDATE);
+                Message<String> message = new Message<>(snapshot.getValue(String.class),
+                        Topic.PIN_UPDATE);
                 mBus.publish(message);
             }
         };
 
-        mDbService = FirebaseCloudServices.getInstance().getDatabase();
+        mDbService = dbService;
 
         mDbService.addChildListener(appInfoPath, mAppInfoListener);
         mDbService.addValueListener(pinPath, mPinListener);
@@ -62,16 +64,18 @@ public class CloudManager implements ISubscriber {
 
     @Override
     public void notify(Message message) {
+        if (!(message instanceof CloudMessage)) return;
         CloudMessage cloudMessage;
         switch (message.getTopic()) {
             case WRITE_TO_CLOUD:
                 cloudMessage = (CloudMessage) message;
-                mDbService.setValue(cloudMessage.getPath(), cloudMessage.getData(), new ResultListener<Void, DatabaseError>() {
-                    @Override
-                    public void onFailure(DatabaseError error) {
-                        Log.d("Database access fail", error.name());
-                    }
-                });
+                mDbService.setValue(cloudMessage.getPath(), cloudMessage.getData(),
+                        new ResultListener<Void, DatabaseError>() {
+                            @Override
+                            public void onFailure(DatabaseError error) {
+                                Log.d("Database access fail", error.name());
+                            }
+                        });
                 break;
             case DELETE_FROM_CLOUD:
                 cloudMessage = (CloudMessage) message;

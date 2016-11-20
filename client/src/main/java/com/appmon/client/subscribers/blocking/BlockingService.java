@@ -72,7 +72,8 @@ public class BlockingService extends AccessibilityService implements ISubscriber
         mAccessibilityInfo.notificationTimeout = 50;
         setServiceInfo(mAccessibilityInfo);
 
-        mSubscriberManager = new SubscriberManager(getBusInstance(), this.getApplicationContext(), this);
+        mSubscriberManager =
+                new SubscriberManager(getBusInstance(), this.getApplicationContext(), this);
 
         mBus.subscribe(this, Topic.APP_STATE_UPDATE);
         mBus.subscribe(this, Topic.UNBLOCK_APP);
@@ -85,7 +86,7 @@ public class BlockingService extends AccessibilityService implements ISubscriber
         }
         if (mUnblockedPackageName == null) {
             for (PackageInfo p : mPackages) {
-                if (p.getPackageName().equals(event.getPackageName())){
+                if (p.getPackageName().equals(event.getPackageName())) {
                     if (p.isBlocked()) {
                         mBus.publish(new Message<>(event.getPackageName(), Topic.BLOCK_APP));
                     }

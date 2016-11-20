@@ -22,6 +22,10 @@ public interface ILoginActivity {
          */
         PASSWORD_INVALID,
         /**
+         * Everything is bad.
+         */
+        UNKNOWN_ERROR,
+        /**
          * Everything is fine.
          */
         NO_ERROR
@@ -29,6 +33,7 @@ public interface ILoginActivity {
 
     /**
      * Sets an error state on this activity.
+     *
      * @param error One of the possible {@link Error} values.
      */
     void setError(Error error);
@@ -40,6 +45,7 @@ public interface ILoginActivity {
 
     /**
      * Hides or shows a progress bar.
+     *
      * @param show When true, shows the progress bar.
      */
     void showProgress(boolean show);

@@ -37,10 +37,12 @@ public class AppListPresenter implements IAppListPresenter {
         List<PackageInfo> viewList = new ArrayList<>();
         int i = 0;
         for (Map.Entry<String, PackageInfo> entry : mApps.entrySet()) {
-            String appName = entry.getValue().getName().toLowerCase();
-            if (appName.contains(mFilter)) {
-                viewList.add(entry.getValue());
-                mIndexedApps.put(i++, entry.getKey());
+            String appName = entry.getValue().getName();
+            if (appName != null) {
+                if (appName.toLowerCase().contains(mFilter)) {
+                    viewList.add(entry.getValue());
+                    mIndexedApps.put(i++, entry.getKey());
+                }
             }
         }
         mView.updateList(viewList);
@@ -53,7 +55,7 @@ public class AppListPresenter implements IAppListPresenter {
 
     @Override
     public void setFilter(String filter) {
-        mFilter = filter;
+        mFilter = filter.toLowerCase();
         updateView();
     }
 

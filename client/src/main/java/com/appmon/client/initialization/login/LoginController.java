@@ -37,6 +37,7 @@ public class LoginController implements ILoginController {
     @Override
     public void attemptLogin(String email, String password) {
         // Reset errors.
+        mLoginActivity.showProgress(true);
         mLoginActivity.setError(ILoginActivity.Error.NO_ERROR);
         ILoginActivity.Error error = null;
 
@@ -56,9 +57,11 @@ public class LoginController implements ILoginController {
                 @Override
                 public void onSuccess(IUser user) {
                     mLoginActivity.loginSuccessful();
+                    mLoginActivity.showProgress(false);
                 }
                 @Override
                 public void onFailure(Throwable err) {
+                    mLoginActivity.showProgress(false);
                     try {
                         throw err;
                     } catch (AuthWrongPasswordException e) {
@@ -66,7 +69,7 @@ public class LoginController implements ILoginController {
                     } catch (AuthInvalidEmailException e) {
                         mLoginActivity.setError(ILoginActivity.Error.EMAIL_INVALID);
                     } catch (Throwable e) {
-                        Log.d("Unknown exception", e.getMessage());
+
                     }
                 }
             });

@@ -66,15 +66,12 @@ public class BlockingService extends AccessibilityService implements ISubscriber
                 if (p.getPackageName().equals(event.getPackageName())){
                     if (p.isBlocked()) {
                         mBus.publish(new Message<>(event.getPackageName(), Topic.BLOCK_APP));
-                    }else{
-                        break;
                     }
+                    break;
                 }
             }
         } else if (!event.getPackageName().equals(mUnblockedPackageName)) {
             mUnblockedPackageName = null;
-            Log.d("BLOCK", "Was unblocked app :" + mUnblockedPackageName);
-            Log.d("BLOCK", "Blocked app :" + event.getPackageName());
         }
     }
 
@@ -102,7 +99,6 @@ public class BlockingService extends AccessibilityService implements ISubscriber
             case UNBLOCK_APP:
                 if (message.getData() != null) {
                     mUnblockedPackageName = message.getData().toString();
-                    Log.d("BLOCK", "Was unblocked app :" + mUnblockedPackageName);
                 } else {
                     mUnblockedPackageName = null;
                     if (android.os.Build.VERSION.SDK_INT < 16) {

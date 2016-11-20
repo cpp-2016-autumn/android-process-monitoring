@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 /**
  * Class for implementing publsher/subscriber pattern.
- * Created by MikeSotnichek on 11/1/2016.
+ * Notifies any interested subscribers of published messages on various topics.
  */
 
 public class Bus {

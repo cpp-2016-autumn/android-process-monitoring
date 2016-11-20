@@ -16,4 +16,6 @@ public interface ILoginActivity {
     void setError(Error error);
 
     void loginSuccessful();
+
+    void showProgress(boolean show);
 }

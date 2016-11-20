@@ -19,7 +19,7 @@
         </activity>
 
         <activity
-            android:name=".subscribers.blocking.BlockingView"
+            android:name=".subscribers.blocking.BlockingActivity"
             android:label="@string/title_activity_blocking_view"
             android:theme="@style/AppTheme">
         </activity>

@@ -6,10 +6,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.appmon.client.bus.Bus;
-import com.appmon.client.subscribers.blocking.BlockingScreenManager;
+import com.appmon.client.subscribers.blocking.BlockingController;
 import com.appmon.client.subscribers.blocking.BlockingService;
 import com.appmon.shared.DatabaseError;
 import com.appmon.shared.DatabaseValueListener;
@@ -32,11 +31,12 @@ import java.util.Set;
 
 public class SubscriberManager {
     private Context mContext;
+    private static final String[] BLOCKED_BY_DEFAULT = {"com.android.settings", "com.android.packageinstaller"};
 
     private CloudManager mCloudManager = null;
     private PackageUpdateManager mPackageSubscriber = null;
     private BlockingService mBlockerService = null;
-    private BlockingScreenManager mBlockingScreenManager = null;
+    private BlockingController mBlockingController = null;
     private Bus mBus = null;
 
     public SubscriberManager(Bus bus, Context context, BlockingService blocker) {
@@ -63,7 +63,7 @@ public class SubscriberManager {
                 filter.addDataScheme("package");
                 mContext.registerReceiver(mPackageSubscriber, filter);
                 mCloudManager = new CloudManager(mBus, appsInfoPath, pinPath);
-                mBlockingScreenManager = new BlockingScreenManager(mBus, mContext);
+                mBlockingController = new BlockingController(mBus, mContext);
             }
 
             @Override
@@ -104,10 +104,17 @@ public class SubscriberManager {
                 List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
                 Set<PackageInfo> devicePackages = new HashSet<>();
                 for (ApplicationInfo info : packages) {
+                    boolean isBlockedByDefault = false;
+                    for (String pn: BLOCKED_BY_DEFAULT) {
+                        if (pn.equals(info.packageName)){
+                            isBlockedByDefault = true;
+                            break;
+                        }
+                    }
                     devicePackages.add(new PackageInfo(
                             pm.getApplicationLabel(info).toString(),
                             info.packageName,
-                            false));
+                            isBlockedByDefault));
                 }
 
                 //new device packages
@@ -154,6 +161,6 @@ public class SubscriberManager {
         mCloudManager.cleanUp();
         mContext.unregisterReceiver(mPackageSubscriber);
         mBlockerService.cleanUp();
-        mBlockingScreenManager.cleanUp();
+        mBlockingController.cleanUp();
     }
 }

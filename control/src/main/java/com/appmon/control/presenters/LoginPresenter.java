@@ -22,13 +22,13 @@ public class LoginPresenter implements ILoginPresenter {
         mSignInListener = new IUserModel.ISignInListener() {
             @Override
             public void onSuccess() {
-                mView.showProgress(false);
+                mView.setProgressVisible(false);
                 mView.startDeviceListActivity();
             }
 
             @Override
             public void onFail(IUserModel.SignInError error) {
-                mView.showProgress(false);
+                mView.setProgressVisible(false);
                 switch (error) {
                     case INVALID_EMAIL:
                         mView.showInputError(ILoginView.InputError.INVALID_EMAIL);
@@ -65,7 +65,7 @@ public class LoginPresenter implements ILoginPresenter {
     public void signInWithEmail(String email, String password) {
         if (mView != null) {
             mView.clearInputErrors();
-            mView.showProgress(true);
+            mView.setProgressVisible(true);
         }
         mModel.signInWithEmail(email, password);
     }

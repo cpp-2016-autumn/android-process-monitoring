@@ -40,24 +40,24 @@ public class RegisterPresenterTest {
         // send success. is must start new activity and hide progress
         listener.getValue().onSuccess();
         verify(mockedView).startDeviceListActivity();
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         // fails
         reset(mockedView);
         listener.getValue().onFail(IUserModel.RegisterError.INVALID_EMAIL);
         verify(mockedView).showInputError(IRegisterView.InputError.INVALID_EMAIL);
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         reset(mockedView);
         listener.getValue().onFail(IUserModel.RegisterError.USER_EXISTS);
         verify(mockedView).showInputError(IRegisterView.InputError.USER_EXISTS);
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         reset(mockedView);
         listener.getValue().onFail(IUserModel.RegisterError.WEAK_PASSWORD);
         verify(mockedView).showInputError(IRegisterView.InputError.WEAK_PASSWORD);
-        verify(mockedView).showProgress(false);
+        verify(mockedView).setProgressVisible(false);
         // test register action code
         presenter.registerWithEmail("Test", "String");
         verify(mockedView).clearInputErrors();
-        verify(mockedView).showProgress(true);
+        verify(mockedView).setProgressVisible(true);
         verify(mockedModel).registerWithEmail(any(String.class), any(String.class));
     }
 

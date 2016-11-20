@@ -11,8 +11,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appmon.control.persistence.ModelPresenterManager;
+import com.appmon.control.persistence.ModelManager;
 import com.appmon.control.presenters.ILoginPresenter;
+import com.appmon.control.presenters.LoginPresenter;
 import com.appmon.control.views.ILoginView;
 
 public class LoginActivity extends AppCompatActivity implements ILoginView {
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // attach presenter
-        mPresenter = ModelPresenterManager.getInstance().getLoginPresenter();
+        mPresenter = new LoginPresenter(ModelManager.getInstance().getUserModel());
         mPresenter.attachView(this);
         // Gui elements Binding
         mProgressBar = (ProgressBar) findViewById(R.id.loginProgress);
@@ -85,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void showProgress(boolean state) {
+    public void setProgressVisible(boolean state) {
         if (state) {
             mLoginForm.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);

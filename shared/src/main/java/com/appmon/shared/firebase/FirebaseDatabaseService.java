@@ -83,7 +83,8 @@ class FirebaseDatabaseService implements IDatabaseService {
                 listener.onCanceled(toDatabaseError(databaseError));
             }
         };
-        FirebaseChildHandler handler = new FirebaseChildHandler(dbListener, mDatabase.getReference(path));
+        FirebaseChildHandler handler =
+                new FirebaseChildHandler(dbListener, mDatabase.getReference(path));
         mChildListeners.put(listener, handler);
         handler.connect();
         return listener;

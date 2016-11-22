@@ -40,4 +40,16 @@ public class PackageInfo {
     public void setBlocked(boolean blocked) {
         isBlocked = blocked;
     }
+
+    @Override
+    public int hashCode(){
+        return packageName.hashCode();
+    }
+    @Override
+    public boolean equals(Object other){
+        if (other instanceof PackageInfo) {
+            return packageName.equals(((PackageInfo) other).getPackageName());
+        }
+        return false;
+    }
 }

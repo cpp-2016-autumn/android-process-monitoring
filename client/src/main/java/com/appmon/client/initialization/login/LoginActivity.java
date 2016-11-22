@@ -1,28 +1,22 @@
 package com.appmon.client.initialization.login;
 
-import android.support.annotation.NonNull;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appmon.client.R;
 import com.appmon.client.initialization.SetupService;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A login screen that offers login via email/password.
@@ -33,8 +27,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     private ILoginController mController;
 
     // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
+    private EditText mEmailText;
+    private EditText mPasswordText;
+    private View mProgressView;
+    private View mLoginView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +41,13 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
         mController.hookActivity(this);
 
         // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mEmailText = (EditText) findViewById(R.id.email);
+        mPasswordText = (EditText) findViewById(R.id.password);
+        mProgressView = findViewById(R.id.email_login_progress);
+        mLoginView = findViewById(R.id.email_login_form);
+        mProgressView.setVisibility(View.GONE);
         final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 mEmailSignInButton.callOnClick();
@@ -59,9 +58,14 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (view != null) {
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
                 mController.attemptLogin(
-                        mEmailView.getText().toString(),
-                        mPasswordView.getText().toString());
+                        mEmailText.getText().toString(),
+                        mPasswordText.getText().toString());
             }
         });
     }
@@ -70,27 +74,41 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void showProgress(boolean show) {
+        if (show) {
+            mLoginView.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.VISIBLE);
+        } else {
+            mLoginView.setVisibility(View.VISIBLE);
+            mProgressView.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void setError(Error error) {
         switch (error) {
             case NO_ERROR:
-                mPasswordView.setError(null);
-                mEmailView.setError(null);
+                mPasswordText.setError(null);
+                mEmailText.setError(null);
                 break;
             case EMAIL_EMPTY:
-                mEmailView.setError(getString(R.string.error_field_required));
-                mEmailView.requestFocus();
+                mEmailText.setError(getString(R.string.error_field_required));
+                mEmailText.requestFocus();
                 break;
             case EMAIL_INVALID:
-                mEmailView.setError(getString(R.string.error_invalid_email));
-                mEmailView.requestFocus();
+                mEmailText.setError(getString(R.string.error_invalid_email));
+                mEmailText.requestFocus();
                 break;
             case PASSWORD_INVALID:
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mPasswordText.setError(getString(R.string.error_incorrect_password));
+                mPasswordText.requestFocus();
+                break;
+            default:
+                Toast.makeText(LoginActivity.this, R.string.auth_failed, Toast.LENGTH_LONG)
+                        .show();
                 break;
         }
     }
@@ -98,9 +116,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivity {
 
     @Override
     public void loginSuccessful() {
-        SetupService.StartInit(getApplicationContext(), mEmailView.getText().toString());
-        Toast.makeText(LoginActivity.this, R.string.auth_complete,
-                Toast.LENGTH_SHORT).show();
+        SetupService.StartInit(getApplicationContext());
+        Toast.makeText(LoginActivity.this, R.string.auth_complete, Toast.LENGTH_LONG).show();
         finish();
     }
 

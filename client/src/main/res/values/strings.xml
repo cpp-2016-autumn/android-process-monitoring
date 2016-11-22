@@ -5,15 +5,19 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_pin">Input PIN</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="auth_failed">Authentication failed</string>
     <string name="auth_complete">Authentication complete</string>
+
+    <!-- Strings related to blocking -->
+    <string name="acc_service_name">Appmon blocking service</string>
+    <string name="title_activity_blocking_view">Application blocked</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_unlock_short">Unlock app</string>
 </resources>

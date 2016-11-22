@@ -6,23 +6,28 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Class for implementing publsher/subscriber pattern.
- * Created by MikeSotnichek on 11/1/2016.
+ * Implements publsher/subscriber pattern.
+ * Notifies any interested subscribers of published messages on various topics.
  */
-
 public class Bus {
-    private HashMap<String, LinkedList<ISubscriber>> mTopics;
-    private static Bus Instance = null;
+    /**
+     * Maps a list of subscribers to a topic.
+     */
+    private HashMap<Topic, LinkedList<ISubscriber>> mTopics;
 
-    private Bus() {
+    /**
+     * Default constructor for {@code Bus}.
+     */
+    public Bus() {
         mTopics = new HashMap<>();
     }
 
-    public static Bus getInstance() {
-        if (Instance == null) Instance = new Bus();
-        return Instance;
-    }
-
+    /**
+     * Publishes a message to its topic.
+     * If any listeners are interested, notifies each listener about a message.
+     *
+     * @param message A message to pass to listeners.
+     */
     public void publish(Message message) {
         if (mTopics.containsKey(message.getTopic())) {
             LinkedList<ISubscriber> topicISubscribers = mTopics.get(message.getTopic());
@@ -32,12 +37,33 @@ public class Bus {
         }
     }
 
-    public void subscribe(ISubscriber ISubscriber, String topic) {
+    /**
+     * Subscribes an {@code ISubscriber} to a specified {@code Topic}.
+     * Adds a subscriber to the list of subscribers of the specified topic.
+     * Opens a new topic if nessesary.
+     *
+     * @param subscriber An {@link ISubscriber} to add
+     * @param topic      A topic which the subscriber is interested in.
+     */
+    public void subscribe(ISubscriber subscriber, Topic topic) {
         if (mTopics.containsKey(topic)) {
-            mTopics.get(topic).add(ISubscriber);
+            mTopics.get(topic).add(subscriber);
         } else {
             mTopics.put(topic, new LinkedList<ISubscriber>());
-            mTopics.get(topic).add(ISubscriber);
+            mTopics.get(topic).add(subscriber);
+        }
+    }
+
+    /**
+     * Unsubscribes an {@code ISubscriber} to a specified {@code Topic}.
+     * Removes a subscriber from the list of subscribers of the specified topic.
+     *
+     * @param subscriber An {@link ISubscriber} to remove
+     * @param topic      A topic which the subscriber was interested in.
+     */
+    public void unsubscribe(ISubscriber subscriber, Topic topic) {
+        if (mTopics.containsKey(topic)) {
+            mTopics.get(topic).remove(subscriber);
         }
     }
 }

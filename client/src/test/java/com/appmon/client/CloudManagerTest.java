@@ -1,7 +1,7 @@
 package com.appmon.client;
 
 import com.appmon.client.bus.Bus;
-import com.appmon.client.bus.CloudMessage;
+import com.appmon.client.subscribers.CloudMessageContent;
 import com.appmon.client.bus.Message;
 import com.appmon.client.bus.Topic;
 import com.appmon.client.subscribers.CloudManager;
@@ -20,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.verification.VerificationMode;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -51,33 +50,44 @@ public class CloudManagerTest {
     private ArgumentCaptor<ResultListener<Void, DatabaseError>> writeResultListener;
 
     @Before
-    public void setup(){
+    public void setup() {
         bus = new Bus();
         busSpy = spy(bus);
-    }
-
-    @Test
-    public void testCloudManager() {
         cloudManager = new CloudManager(busSpy, mockDb, dataPath, pinPath);
         verify(busSpy).subscribe(any(ISubscriber.class), eq(Topic.WRITE_TO_CLOUD));
         verify(busSpy).subscribe(any(ISubscriber.class), eq(Topic.DELETE_FROM_CLOUD));
         verify(mockDb).addChildListener(any(String.class), childListener.capture());
         verify(mockDb).addValueListener(any(String.class), valueListener.capture());
+    }
 
+    @Test
+    public void testWrite() {
         //Test write
-        bus.publish(new CloudMessage<>("Test", dataPath, Topic.WRITE_TO_CLOUD));
+        bus.publish(new Message<>(new CloudMessageContent(dataPath, "Test"),
+                Topic.WRITE_TO_CLOUD));
         verify(mockDb).setValue(eq(dataPath), any(Object.class), writeResultListener.capture());
+    }
 
+    @Test
+    public void testDelete() {
         //Test delete
-        bus.publish(new CloudMessage<>("Test", dataPath, Topic.DELETE_FROM_CLOUD));
+        bus.publish(new Message<>(new CloudMessageContent(dataPath, "Test"),
+                Topic.DELETE_FROM_CLOUD));
         verify(mockDb).setValue(eq(dataPath), eq(null), writeResultListener.capture());
+    }
 
+    @Test
+    public void testUpdateChildren() {
         //Test update children
         childListener.getValue().onChildAdded(mock(IDataSnapshot.class));
+        verify(busSpy, times(1)).publish(any(Message.class));
+    }
 
+    @Test
+    public void testUpdatePin() {
         //Test update pin
         valueListener.getValue().onChanged(mock(IDataSnapshot.class));
-        verify(busSpy, times(2)).publish(any(Message.class));
+        verify(busSpy, times(1)).publish(any(Message.class));
     }
 
 }

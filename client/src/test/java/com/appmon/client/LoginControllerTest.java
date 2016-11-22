@@ -31,56 +31,80 @@ public class LoginControllerTest {
     @Mock
     private IAuthService mockAuth;
 
-    private IUser user;
-
     @Captor
     private ArgumentCaptor<ResultListener<IUser, Throwable>> authResult;
 
     @Before
     public void setup() {
         controller = new LoginController(mockAuth);
+        controller.hookActivity(mockLoginActivity);
     }
 
     @Test
-    public void testLoginController(){
-        controller.hookActivity(mockLoginActivity);
-
+    public void testEmptyEmail() {
         //Test empty email
         controller.attemptLogin("", "password");
         verify(mockLoginActivity).setError(ILoginActivity.Error.EMAIL_EMPTY);
         reset(mockLoginActivity);
+    }
 
+    @Test
+    public void testInvalidEmail() {
         //Test invalid email
         controller.attemptLogin("Foo", "password");
         verify(mockLoginActivity).setError(ILoginActivity.Error.EMAIL_INVALID);
         reset(mockLoginActivity);
+    }
 
+    @Test
+    public void testInvalidPassword() {
         //Test invalid password
         controller.attemptLogin("Foo", "");
         verify(mockLoginActivity).setError(ILoginActivity.Error.PASSWORD_INVALID);
         reset(mockLoginActivity);
+    }
 
-        controller.attemptLogin("Foo@bar.test", "password");
+    @Test
+    public void testWrongEmail() {
         //Test wrong email
+        controller.attemptLogin("Foo@bar.test", "password");
         verify(mockAuth).signInWithEmail(any(String.class), any(String.class),
                 authResult.capture());
         authResult.getValue().onFailure(new AuthInvalidEmailException(null));
         verify(mockLoginActivity).setError(ILoginActivity.Error.EMAIL_INVALID);
         reset(mockLoginActivity);
+    }
 
+    @Test
+    public void testWrongPassword() {
         //Test wrong password
+        controller.attemptLogin("Foo@bar.test", "password");
+        verify(mockAuth).signInWithEmail(any(String.class), any(String.class),
+                authResult.capture());
         authResult.getValue().onFailure(new AuthWrongPasswordException(null));
         verify(mockLoginActivity).setError(ILoginActivity.Error.PASSWORD_INVALID);
         reset(mockLoginActivity);
+    }
 
+    @Test
+    public void testLoginFail() {
         //Test unknown error
+        controller.attemptLogin("Foo@bar.test", "password");
+        verify(mockAuth).signInWithEmail(any(String.class), any(String.class),
+                authResult.capture());
         authResult.getValue().onFailure(new AuthEmailTakenException(null));
         authResult.getValue().onFailure(new AuthException(null));
         verify(mockLoginActivity, times(2)).setError(ILoginActivity.Error.UNKNOWN_ERROR);
         reset(mockLoginActivity);
+    }
 
+    @Test
+    public void testLogin() {
         //Test proper login
-        authResult.getValue().onSuccess(user);
+        controller.attemptLogin("Foo@bar.test", "password");
+        verify(mockAuth).signInWithEmail(any(String.class), any(String.class),
+                authResult.capture());
+        authResult.getValue().onSuccess(null);
         verify(mockLoginActivity).setError(ILoginActivity.Error.NO_ERROR);
         verify(mockLoginActivity).loginSuccessful();
         reset(mockLoginActivity);

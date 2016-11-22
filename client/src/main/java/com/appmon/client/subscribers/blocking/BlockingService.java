@@ -98,7 +98,7 @@ public class BlockingService extends AccessibilityService implements ISubscriber
 
     @Override
     public void onInterrupt() {
-        //Ok
+        Log.d("Blocking", "onInterrupt: called!");
     }
 
     @Override
@@ -131,6 +131,9 @@ public class BlockingService extends AccessibilityService implements ISubscriber
                         performGlobalAction(GLOBAL_ACTION_HOME);
                     }
                 }
+                break;
+            default:
+                Log.d("Blocking", "notify: Unrecognized message.");
                 break;
         }
     }

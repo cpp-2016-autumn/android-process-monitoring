@@ -34,31 +34,48 @@ public class BusTest {
 
 
     @Test
-    public void testCommunication() {
+    public void testSingleTopic() {
         //subscribe mock subscribers
         bus.subscribe(mockedSubscriber, Topic.BLOCK_APP);
         bus.subscribe(mockedSecondSubscriber, Topic.BLOCK_APP);
 
-        bus.subscribe(mockedSecondSubscriber, Topic.BLOCK_APP);
+        bus.subscribe(mockedSecondSubscriber, Topic.UNBLOCK_APP);
 
-        //publish test message to "Test topic"
+        //publish test message
         Message<String> m = new Message<>("Test message!", Topic.BLOCK_APP);
         bus.publish(m);
         verify(mockedSubscriber).notify(m);
         verify(mockedSecondSubscriber).notify(m);
 
         reset(mockedSubscriber, mockedSecondSubscriber);
+    }
 
-        //publish test message to "Second topic"
-        Message<String> m1 = new Message<>("Test message!", Topic.BLOCK_APP);
+    @Test
+    public void testMultipleTopic(){
+        bus.subscribe(mockedSubscriber, Topic.BLOCK_APP);
+        bus.subscribe(mockedSecondSubscriber, Topic.BLOCK_APP);
+
+        bus.subscribe(mockedSecondSubscriber, Topic.UNBLOCK_APP);
+
+        //publish test message to two topics
+        Message<String> m = new Message<>("Test message!", Topic.BLOCK_APP);
+        Message<String> m1 = new Message<>("Test message!", Topic.UNBLOCK_APP);
         bus.publish(m);
         bus.publish(m1);
         verify(mockedSubscriber, times(1)).notify(m);
         verify(mockedSecondSubscriber, times(2)).notify(any(Message.class));
 
         reset(mockedSubscriber, mockedSecondSubscriber);
+    }
 
-        //publish test message to "No topic"
+    @Test
+    public void testNoTopic(){
+        bus.subscribe(mockedSubscriber, Topic.BLOCK_APP);
+        bus.subscribe(mockedSecondSubscriber, Topic.BLOCK_APP);
+
+        bus.subscribe(mockedSecondSubscriber, Topic.UNBLOCK_APP);
+
+        //publish test message to a topic with no listeners
         Message<String> m2 = new Message<>("Test message!", Topic.WRITE_TO_CLOUD);
         bus.publish(m2);
         verifyZeroInteractions(mockedSubscriber, mockedSecondSubscriber);

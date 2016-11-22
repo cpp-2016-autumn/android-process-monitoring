@@ -3,7 +3,6 @@ package com.appmon.client.subscribers;
 import android.util.Log;
 
 import com.appmon.client.bus.Bus;
-import com.appmon.client.bus.CloudMessage;
 import com.appmon.client.bus.Message;
 import com.appmon.client.bus.Topic;
 import com.appmon.shared.DatabaseChildListener;
@@ -13,7 +12,6 @@ import com.appmon.shared.IDataSnapshot;
 import com.appmon.shared.IDatabaseService;
 import com.appmon.shared.ResultListener;
 import com.appmon.shared.entities.PackageInfo;
-import com.appmon.shared.firebase.FirebaseCloudServices;
 
 /**
  * Listens data updates on the cloud. Sends information to the cloud.
@@ -64,12 +62,12 @@ public class CloudManager implements ISubscriber {
 
     @Override
     public void notify(Message message) {
-        if (!(message instanceof CloudMessage)) return;
-        CloudMessage cloudMessage;
+        if (!(message.getData() instanceof CloudMessageContent)) return;
+        CloudMessageContent cloudMessageContent;
         switch (message.getTopic()) {
             case WRITE_TO_CLOUD:
-                cloudMessage = (CloudMessage) message;
-                mDbService.setValue(cloudMessage.getPath(), cloudMessage.getData(),
+                cloudMessageContent = (CloudMessageContent) message.getData();
+                mDbService.setValue(cloudMessageContent.getPath(), cloudMessageContent.getData(),
                         new ResultListener<Void, DatabaseError>() {
                             @Override
                             public void onFailure(DatabaseError error) {
@@ -78,13 +76,17 @@ public class CloudManager implements ISubscriber {
                         });
                 break;
             case DELETE_FROM_CLOUD:
-                cloudMessage = (CloudMessage) message;
-                mDbService.setValue(cloudMessage.getPath(), null, new ResultListener<Void, DatabaseError>() {
+                cloudMessageContent = (CloudMessageContent) message.getData();
+                mDbService.setValue(cloudMessageContent.getPath(), null, new ResultListener<Void, DatabaseError>() {
                     @Override
                     public void onFailure(DatabaseError error) {
                         Log.d("Database access fail", error.name());
                     }
                 });
+                break;
+            default:
+                Log.d("Cloud", "notify: Unrecognized message.");
+                break;
         }
     }
 

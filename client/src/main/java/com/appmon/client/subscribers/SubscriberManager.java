@@ -110,14 +110,14 @@ public class SubscriberManager {
         cloudDb.addValueListener(appListPath, new DatabaseValueListener() {
             @Override
             public void onChanged(IDataSnapshot snapshot) {
+                cloudDb.removeValueListener(this);
+
                 Set<PackageInfo> cloudPackages = new HashSet<>();
                 if (snapshot.exists()) {
                     for (IDataSnapshot child : snapshot.getChildren()) {
                         cloudPackages.add(child.getValue(PackageInfo.class));
                     }
                 }
-                cloudDb.removeValueListener(this);
-
                 PackageManager pm = mContext.getPackageManager();
                 List<ApplicationInfo> packages =
                         pm.getInstalledApplications(PackageManager.GET_META_DATA);
@@ -155,6 +155,7 @@ public class SubscriberManager {
                     dataToDelete.put(Integer.toString(p.hashCode()), null);
                 }
 
+                //Upload data
                 if (!dataToAdd.isEmpty()) {
                     cloudDb.setValue(appListPath, dataToAdd,
                             new ResultListener<Void, DatabaseError>() {

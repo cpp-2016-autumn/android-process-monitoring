@@ -8,7 +8,7 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.appmon.client.bus.Bus;
-import com.appmon.client.bus.CloudMessage;
+import com.appmon.client.bus.Message;
 import com.appmon.client.bus.Topic;
 import com.appmon.shared.entities.PackageInfo;
 
@@ -43,12 +43,14 @@ public class PackageUpdateManager extends BroadcastReceiver {
                 try {
                     ApplicationInfo info = pm.getApplicationInfo(packageName,
                             PackageManager.GET_META_DATA);
-                    CloudMessage<PackageInfo> message = new CloudMessage<>(
-                            new PackageInfo(
-                                    pm.getApplicationLabel(info).toString(),
-                                    info.packageName,
-                                    false),
-                            (mAppsInfoPath + "/" + Integer.toString(packageName.hashCode())),
+                    Message<CloudMessageContent> message = new Message<>(
+                            new CloudMessageContent(
+                                    (mAppsInfoPath + "/" +
+                                            Integer.toString(packageName.hashCode())),
+                                    new PackageInfo(
+                                            pm.getApplicationLabel(info).toString(),
+                                            info.packageName,
+                                            false)),
                             Topic.WRITE_TO_CLOUD);
                     mBus.publish(message);
                 } catch (PackageManager.NameNotFoundException e) {
@@ -57,8 +59,9 @@ public class PackageUpdateManager extends BroadcastReceiver {
 
             } else if (action.equals(ACTION_REMOVED)) {
                 String packageName = intent.getData().toString().substring(8);
-                mBus.publish(new CloudMessage<>("",
-                        mAppsInfoPath + "/" + Integer.toString(packageName.hashCode()),
+                mBus.publish(new Message<>(
+                        new CloudMessageContent(
+                                mAppsInfoPath + "/" + Integer.toString(packageName.hashCode()), ""),
                         Topic.DELETE_FROM_CLOUD));
             }
         }

@@ -1,6 +1,7 @@
 package com.appmon.client.subscribers.blocking;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.appmon.client.bus.Bus;
 import com.appmon.client.bus.Message;
@@ -45,6 +46,9 @@ public class BlockingController implements ISubscriber {
                 break;
             case BLOCK_APP:
                 BlockingActivity.startActivity(mContext, message.getData().toString(), mPin);
+                break;
+            default:
+                Log.d("BlockControl", "notify: Unrecognized message.");
                 break;
         }
     }

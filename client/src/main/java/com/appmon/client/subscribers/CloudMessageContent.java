@@ -1,25 +1,31 @@
-package com.appmon.client.bus;
+package com.appmon.client.subscribers;
+
+import com.appmon.client.bus.Message;
+import com.appmon.client.bus.Topic;
 
 /**
  * A message delivered to a subscriber to be sent to the cloud
  * Contains information about where the contents will be sent on the cloud.
  */
-public class CloudMessage<T> extends Message<T> {
+public class CloudMessageContent {
     /**
      * The path on the cloud.
      */
     private String mPath;
+    /**
+     * Data to send to the cloud.
+     */
+    private Object mData;
 
     /**
      * Creates a message with some contents which should be sent
      *
-     * @param value The contents of this message.
      * @param path  The path where to place contents.
-     * @param topic The topic of this message.
+     * @param value The contents of this message.
      */
-    public CloudMessage(T value, String path, Topic topic) {
-        super(value, topic);
+    public CloudMessageContent(String path, Object value) {
         mPath = path;
+        mData = value;
     }
 
     /**
@@ -31,4 +37,12 @@ public class CloudMessage<T> extends Message<T> {
         return mPath;
     }
 
+    /**
+     * Public getter for data.
+     *
+     * @return The data value.
+     */
+    public Object getData() {
+        return mData;
+    }
 }

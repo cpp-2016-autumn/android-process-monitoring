@@ -213,7 +213,7 @@ public class UserModel implements IUserModel {
     @Override
     public void changeAppPin(String pin) {
         // validation
-        if (pin == null) {
+        if (pin == null || pin.isEmpty()) {
             mPreferences.remove(PREFERENCES_APP_PIN_KEY);
         } else {
             if (!Validator.validatePin(pin)) {

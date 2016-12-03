@@ -19,6 +19,7 @@ public interface ISettingsView extends IBaseView {
         PASSWORD_CHANGED,
         APP_PIN_CHANGED,
         CLIENT_PIN_CHANGED,
+        NETWORK_ERROR,
     }
 
     /**

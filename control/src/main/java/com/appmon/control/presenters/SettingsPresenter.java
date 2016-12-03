@@ -34,6 +34,9 @@ public class SettingsPresenter implements ISettingsPresenter {
                     case WEAK_PASSWORD:
                         mView.showInputError(ISettingsView.InputError.WEAK_PASSWORD);
                         break;
+                    case INTERNAL_ERROR:
+                        mView.showMessage(ISettingsView.Message.NETWORK_ERROR);
+                        mView.clearFocus();
                 }
             }
         };
@@ -71,6 +74,9 @@ public class SettingsPresenter implements ISettingsPresenter {
                 switch (error) {
                     case WEAK_PIN:
                         mView.showInputError(ISettingsView.InputError.WEAK_CLIENT_PIN);
+                        break;
+                    case INTERNAL_ERROR:
+                        mView.showMessage(ISettingsView.Message.NETWORK_ERROR);
                         break;
                 }
             }

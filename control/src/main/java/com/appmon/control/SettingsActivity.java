@@ -130,6 +130,9 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
             case PASSWORD_CHANGED:
                 Toast.makeText(this, R.string.msg_password_changed, Toast.LENGTH_SHORT).show();
                 break;
+            case NETWORK_ERROR:
+                Toast.makeText(this, R.string.text_network_error, Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 

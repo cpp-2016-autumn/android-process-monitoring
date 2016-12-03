@@ -41,6 +41,7 @@ public class RegisterPresenterTest {
         listener.getValue().onSuccess();
         verify(mockedView).startDeviceListActivity();
         verify(mockedView).setProgressVisible(false);
+        verify(mockedModel).changeClientPin("0000");
         // fails
         reset(mockedView);
         listener.getValue().onFail(IUserModel.RegisterError.INVALID_EMAIL);

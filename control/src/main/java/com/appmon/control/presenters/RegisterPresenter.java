@@ -9,6 +9,7 @@ import com.appmon.control.views.IRegisterView;
  */
 public class RegisterPresenter implements IRegisterPresenter {
 
+    private final String DEFAULT_PIN = "0000";
     private IUserModel mModel;
     private IRegisterView mView = null;
 
@@ -20,6 +21,8 @@ public class RegisterPresenter implements IRegisterPresenter {
         mRegisterListener = new IUserModel.IRegisterListener() {
             @Override
             public void onSuccess() {
+                // set new user pin to default
+                mModel.changeClientPin(DEFAULT_PIN);
                 mView.setProgressVisible(false);
                 mView.startDeviceListActivity();
             }

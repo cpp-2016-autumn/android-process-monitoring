@@ -5,7 +5,7 @@
 
     <string name="text_login">Sign in</string>
     <string name="text_register">Register</string>
-    <string name="text_no_devices">No devices</string>
+    <string name="text_no_devices">No connected devices</string>
     <string name="text_app_search">Search applications</string>
     <string name="text_change_password">Change password</string>
     <string name="text_change_pin">Change pin</string>

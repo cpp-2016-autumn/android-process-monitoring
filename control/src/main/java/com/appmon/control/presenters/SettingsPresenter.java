@@ -124,10 +124,11 @@ public class SettingsPresenter implements ISettingsPresenter {
 
     @Override
     public void changeClientPin(String pin) {
+        if (mView != null) {
+            mView.setProgressVisible(true);
+            mView.clearInputErrors();
+        }
         mModel.changeClientPin(pin);
-        if (mView == null) return;
-        mView.setProgressVisible(true);
-        mView.clearInputErrors();
     }
 
     @Override

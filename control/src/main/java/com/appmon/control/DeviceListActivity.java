@@ -30,6 +30,8 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
     IDeviceListPresenter mPresenter;
 
     ListView mListView;
+    TextView mNoDevicesText;
+
     List<DeviceInfo> mDeviceList;
     DeviceListAdapter mListAdapter;
 
@@ -38,6 +40,7 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
         mListView = (ListView) findViewById(R.id.deviceList);
+        mNoDevicesText = (TextView) findViewById(R.id.noDevicesText);
         mPresenter = new DeviceListPresenter(ModelManager.getInstance()
                 .getDeviceListModel());
         mPresenter.attachView(this);
@@ -94,6 +97,13 @@ public class DeviceListActivity extends AppCompatActivity implements IDeviceList
     public void updateList(List<DeviceInfo> devices) {
         mDeviceList = devices;
         mListAdapter.notifyDataSetChanged();
+        if (mDeviceList.size() == 0) {
+            mListView.setVisibility(View.GONE);
+            mNoDevicesText.setVisibility(View.VISIBLE);
+        } else {
+            mNoDevicesText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

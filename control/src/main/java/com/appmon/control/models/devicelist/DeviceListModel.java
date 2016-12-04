@@ -6,6 +6,7 @@ import com.appmon.shared.DatabaseError;
 import com.appmon.shared.IAuthService;
 import com.appmon.shared.ICloudServices;
 import com.appmon.shared.IDataSnapshot;
+import com.appmon.shared.IDatabaseService;
 import com.appmon.shared.entities.DeviceInfo;
 
 public class DeviceListModel implements IDeviceListModel {
@@ -15,9 +16,10 @@ public class DeviceListModel implements IDeviceListModel {
     private String lastUserId = null;
 
     private IAuthService mAuth;
-
+    private IDatabaseService mDatabase;
     public DeviceListModel(ICloudServices cloudServices) {
-        mDatabaseBridgeManager = new DatabaseBridgeManager<>(cloudServices.getDatabase());
+        mDatabase = cloudServices.getDatabase();
+        mDatabaseBridgeManager = new DatabaseBridgeManager<>(mDatabase);
         mAuth = cloudServices.getAuth();
     }
 
@@ -72,11 +74,12 @@ public class DeviceListModel implements IDeviceListModel {
         };
         // link listener
         mDatabaseBridgeManager.addListener(getRootPath(), presenter, listener);
-
+        mDatabase.goOnline();
     }
 
     @Override
     public void removePresenter(PresenterOps presenter) {
+        mDatabase.goOffline();
         mDatabaseBridgeManager.removeListener(presenter);
     }
 }

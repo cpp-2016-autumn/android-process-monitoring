@@ -15,11 +15,11 @@ public class AppListModel implements IAppListModel {
 //
 //    private Map<PresenterOps, DatabaseChildListener> mListenerBridges;
     private DatabaseBridgeManager<PresenterOps> mDatabaseBridgeManager;
-    private IDatabaseService mDatabase;
 
     private String lastUserId = null;
 
     private IAuthService mAuth;
+    private IDatabaseService mDatabase;
 
     public AppListModel(ICloudServices cloudServices) {
         mDatabase = cloudServices.getDatabase();
@@ -78,10 +78,12 @@ public class AppListModel implements IAppListModel {
         };
         mDatabaseBridgeManager.addListener(getRootPath() + presenter.getDeviceId(), presenter,
                 listener);
+        mDatabase.goOnline();
     }
 
     @Override
     public void removePresenter(PresenterOps presenter) {
+        mDatabase.goOffline();
         mDatabaseBridgeManager.removeListener(presenter);
     }
 

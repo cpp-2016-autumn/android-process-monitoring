@@ -24,7 +24,7 @@ public interface IUserModel extends IBaseModel {
 
     enum ChangeAppPinError { WEAK_PIN }
     enum ChangeClientPinError { WEAK_PIN, INTERNAL_ERROR }
-    enum ChangePasswordError { WEAK_PASSWORD, INTERNAL_ERROR }
+    enum ChangePasswordError { WEAK_PASSWORD, REAUTH_NEEDED, INTERNAL_ERROR }
     enum RegisterError { WEAK_PASSWORD, INVALID_EMAIL, USER_EXISTS, INTERNAL_ERROR }
     enum SignInError {INVALID_EMAIL, WRONG_PASSWORD, INTERNAL_ERROR }
     enum ResetPasswordError { INVALID_USER, INTERNAL_ERROR }

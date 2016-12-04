@@ -202,6 +202,9 @@ public class UserModel implements IUserModel {
                         case WEAK_PASSWORD:
                             l.onFail(ChangePasswordError.WEAK_PASSWORD);
                             break;
+                        case REAUTH_NEEDED:
+                            l.onFail(ChangePasswordError.REAUTH_NEEDED);
+                            break;
                         default:
                             l.onFail(ChangePasswordError.INTERNAL_ERROR);
                     }

@@ -50,6 +50,7 @@
     <string name="text_no_applications">No applications</string>
     <string name="text_device_list_sync_error">Device list sync error</string>
     <string name="text_app_list_sync_error">App list sync error</string>
+    <string name="text_reauth">Please sign out and log in again</string>
     <string name="enter_pin">Enter pin:</string>
     <string name="pin">Pin</string>
 </resources>

@@ -34,6 +34,10 @@ public class SettingsPresenter implements ISettingsPresenter {
                     case WEAK_PASSWORD:
                         mView.showInputError(ISettingsView.InputError.WEAK_PASSWORD);
                         break;
+                    case REAUTH_NEEDED:
+                        mView.showMessage(ISettingsView.Message.REAUTH_NEEDED);
+                        mView.clearFocus();
+                        break;
                     case INTERNAL_ERROR:
                         mView.showMessage(ISettingsView.Message.NETWORK_ERROR);
                         mView.clearFocus();

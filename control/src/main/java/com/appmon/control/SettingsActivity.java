@@ -133,6 +133,8 @@ public class SettingsActivity extends AppCompatActivity implements ISettingsView
             case NETWORK_ERROR:
                 Toast.makeText(this, R.string.text_network_error, Toast.LENGTH_SHORT).show();
                 break;
+            case REAUTH_NEEDED:
+                Toast.makeText(this, R.string.text_reauth, Toast.LENGTH_SHORT).show();
         }
     }
 

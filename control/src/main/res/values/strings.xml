@@ -5,7 +5,7 @@
 
     <string name="text_login">Sign in</string>
     <string name="text_register">Register</string>
-    <string name="text_no_devices">No devices</string>
+    <string name="text_no_devices">No connected devices</string>
     <string name="text_app_search">Search applications</string>
     <string name="text_change_password">Change password</string>
     <string name="text_change_pin">Change pin</string>
@@ -50,6 +50,7 @@
     <string name="text_no_applications">No applications</string>
     <string name="text_device_list_sync_error">Device list sync error</string>
     <string name="text_app_list_sync_error">App list sync error</string>
+    <string name="text_reauth">Please sign out and log in again</string>
     <string name="enter_pin">Enter pin:</string>
     <string name="pin">Pin</string>
 </resources>

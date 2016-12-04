@@ -202,6 +202,9 @@ public class UserModel implements IUserModel {
                         case WEAK_PASSWORD:
                             l.onFail(ChangePasswordError.WEAK_PASSWORD);
                             break;
+                        case REAUTH_NEEDED:
+                            l.onFail(ChangePasswordError.REAUTH_NEEDED);
+                            break;
                         default:
                             l.onFail(ChangePasswordError.INTERNAL_ERROR);
                     }
@@ -244,6 +247,7 @@ public class UserModel implements IUserModel {
             }
             return;
         }
+        mDatabase.goOnline(); // can be turned off by device list model
         mDatabase.setValue(mUserRootPath + "pin", pin, new ResultListener<Void, DatabaseError>() {
             @Override
             public void onSuccess(Void value) {

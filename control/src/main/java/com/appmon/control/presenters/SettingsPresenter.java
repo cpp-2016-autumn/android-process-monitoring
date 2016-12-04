@@ -34,6 +34,10 @@ public class SettingsPresenter implements ISettingsPresenter {
                     case WEAK_PASSWORD:
                         mView.showInputError(ISettingsView.InputError.WEAK_PASSWORD);
                         break;
+                    case REAUTH_NEEDED:
+                        mView.showMessage(ISettingsView.Message.REAUTH_NEEDED);
+                        mView.clearFocus();
+                        break;
                     case INTERNAL_ERROR:
                         mView.showMessage(ISettingsView.Message.NETWORK_ERROR);
                         mView.clearFocus();
@@ -124,10 +128,11 @@ public class SettingsPresenter implements ISettingsPresenter {
 
     @Override
     public void changeClientPin(String pin) {
+        if (mView != null) {
+            mView.setProgressVisible(true);
+            mView.clearInputErrors();
+        }
         mModel.changeClientPin(pin);
-        if (mView == null) return;
-        mView.setProgressVisible(true);
-        mView.clearInputErrors();
     }
 
     @Override

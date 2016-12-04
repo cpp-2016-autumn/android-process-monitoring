@@ -7,6 +7,7 @@ import com.appmon.shared.ResultListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 /**
@@ -41,8 +42,11 @@ class FirebaseUser implements IUser {
                 } else {
                     if (task.getException() instanceof FirebaseAuthWeakPasswordException) {
                         listener.onFailure(ChangePasswordError.WEAK_PASSWORD);
-                    } else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
-                        listener.onFailure(ChangePasswordError.INVALID_USER);
+                    } else if (task.getException() instanceof
+                            FirebaseAuthRecentLoginRequiredException) {
+                        listener.onFailure(ChangePasswordError.REAUTH_NEEDED);
+                    } else {
+                        listener.onFailure(ChangePasswordError.INTERNAL_ERROR);
                     }
                 }
             }

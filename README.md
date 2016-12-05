@@ -2,4 +2,4 @@
 Android application blocker  
 
 ### Status
-Development stage
+Version 1.0.0 released

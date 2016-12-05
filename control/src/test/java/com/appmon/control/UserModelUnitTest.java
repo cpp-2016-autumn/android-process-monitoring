@@ -184,8 +184,11 @@ public class UserModelUnitTest {
         verify(l).onFail(IUserModel.ChangePasswordError.WEAK_PASSWORD);
         model.changePassword("goodPasss");
         verify(user).changePassword(anyString(), changePasswordResult.capture());
-        changePasswordResult.getValue().onFailure(IUser.ChangePasswordError.INVALID_USER);
+        changePasswordResult.getValue().onFailure(IUser.ChangePasswordError.INTERNAL_ERROR);
         verify(l).onFail(IUserModel.ChangePasswordError.INTERNAL_ERROR);
+        reset(l);
+        changePasswordResult.getValue().onFailure(IUser.ChangePasswordError.REAUTH_NEEDED);
+        verify(l).onFail(IUserModel.ChangePasswordError.REAUTH_NEEDED);
         reset(l);
         changePasswordResult.getValue().onFailure(IUser.ChangePasswordError.WEAK_PASSWORD);
         verify(l).onFail(IUserModel.ChangePasswordError.WEAK_PASSWORD);
